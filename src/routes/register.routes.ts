@@ -1,10 +1,10 @@
 import express from "express";
 
-import helloController from "@/controllers/hello.controller";
+import registerController from "@/controllers/register.controller";
 import asyncErrorMiddleware from "@/middlewares/asyncError.middleware";
 
 const router = express.Router();
 
-router.get("/", asyncErrorMiddleware(helloController.hello));
+router.get("/", asyncErrorMiddleware(registerController.register));
 
 export default router;

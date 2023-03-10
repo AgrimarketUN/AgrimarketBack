@@ -3,7 +3,7 @@ import express, { Application } from "express";
 import helmet from "helmet";
 
 import errorMiddleware from "@/middlewares/error.middleware";
-import helloRoutes from "@/routes/hello.routes";
+import loginRoutes from "@/routes/login.routes";
 
 export class App {
 	private readonly _app: Application;
@@ -18,7 +18,7 @@ export class App {
 		this._app.use(helmet());
 		this._app.use(express.json());
 		this._app.use(express.urlencoded({ extended: true }));
-		this._app.use("/", helloRoutes);
+		this._app.use("/", loginRoutes);
 		this._app.use(errorMiddleware);
 	}
 
