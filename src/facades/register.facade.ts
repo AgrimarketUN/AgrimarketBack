@@ -7,6 +7,18 @@ class RegisterFacade {
 			data: await registerService.register(),
 		};
 	}
+
+	async update(): Promise<GenericResponse<string>> {
+		return {
+			data: await registerService.update(),
+		};
+	}
+
+	async show(): Promise<GenericResponse<string>> {
+		return {
+			data: await registerService.show(),
+		};
+	}
 }
 
 export default new RegisterFacade();

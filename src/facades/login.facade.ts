@@ -7,7 +7,7 @@ class LoginFacade {
 			data: await loginService.login(),
 		};
 	}
-    async logout(): Promise<GenericResponse<string>> {
+	async logout(): Promise<GenericResponse<string>> {
 		return {
 			data: await loginService.logout(),
 		};

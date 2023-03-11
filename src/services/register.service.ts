@@ -1,6 +1,12 @@
 class RegisterService {
 	async register(): Promise<string> {
-		return "OK";
+		return "Register user";
+	}
+	async update(): Promise<string> {
+		return "Update user";
+	}
+	async show(): Promise<string> {
+		return "Show page";
 	}
 }
 
