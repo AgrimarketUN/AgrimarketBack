@@ -12,12 +12,12 @@ class LoginFacade {
 			data: await loginService.logout(),
 		};
 	}
-    async showPageLogin(): Promise<GenericResponse<string>> {
+	async showPageLogin(): Promise<GenericResponse<string>> {
 		return {
 			data: await loginService.showPageLogin(),
 		};
 	}
-    async updateDataLogin(): Promise<GenericResponse<string>> {
+	async updateDataLogin(): Promise<GenericResponse<string>> {
 		return {
 			data: await loginService.updateDataLogin(),
 		};
