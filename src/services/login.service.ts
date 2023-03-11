@@ -3,15 +3,15 @@ class LoginService {
 		return "OK";
 	}
 
-    async logout(): Promise<string> {
+	async logout(): Promise<string> {
 		return "OK";
 	}
 
-    async showPageLogin(): Promise<string> {
+	async showPageLogin(): Promise<string> {
 		return "OK";
 	}
 
-    async updateDataLogin(): Promise<string> {
+	async updateDataLogin(): Promise<string> {
 		return "OK";
 	}
 }
