@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.get("/", asyncErrorMiddleware(loginController.login));
 
-router.post("/",asyncErrorMiddleware(loginController.login))
+router.post("/", asyncErrorMiddleware(loginController.login));
 
-router.get("/logout", asyncErrorMiddleware(loginController.logout))
+router.get("/logout", asyncErrorMiddleware(loginController.logout));
 
 export default router;

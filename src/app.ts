@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { Application } from "express";
 import helmet from "helmet";
 
+import db from "@/db/connection";
 import errorMiddleware from "@/middlewares/error.middleware";
 import loginRoutes from "@/routes/login.routes";
 
@@ -11,6 +12,7 @@ export class App {
 	constructor() {
 		this._app = express();
 		this.initMiddlewares();
+		this.initDb();
 	}
 
 	private initMiddlewares() {
@@ -20,6 +22,15 @@ export class App {
 		this._app.use(express.urlencoded({ extended: true }));
 		this._app.use("/", loginRoutes);
 		this._app.use(errorMiddleware);
+	}
+
+	private initDb() {
+		try {
+			db.authenticate();
+			console.log("Database is connected");
+		} catch (error) {
+			console.log("Error connecting to database: ", error);
+		}
 	}
 
 	public get app(): Application {
