@@ -11,6 +11,14 @@ class LoginController {
     async logout(req: Request, res: Response, next: NextFunction): Promise<void>{
         res.json(await loginFacade.logout()).status(STATUS_CODES.OK);
     }
+
+    async show_page_login(req: Request, res: Response, next: NextFunction): Promise<void>{
+        res.json(await loginFacade.showPageLogin()).status(STATUS_CODES.OK);
+    }
+
+    async update_data_login(req: Request, res: Response, next: NextFunction): Promise<void>{
+        res.json(await loginFacade.updateDataLogin()).status(STATUS_CODES.OK);
+    }
 }
 
 export default new LoginController();
