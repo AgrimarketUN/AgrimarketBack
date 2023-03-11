@@ -22,6 +22,7 @@ const User = db.define(
 		correo: {
 			type: DataTypes.STRING(100),
 			allowNull: false,
+			unique: true,
 		},
 		contrasena: {
 			type: DataTypes.STRING(100),
@@ -39,7 +40,7 @@ const User = db.define(
 		createdAt: false,
 		updatedAt: false,
 		tableName: "users",
-	},
+	}
 );
 
 export default User;

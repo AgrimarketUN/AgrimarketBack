@@ -4,8 +4,7 @@ import helmet from "helmet";
 
 import db from "@/db/connection";
 import errorMiddleware from "@/middlewares/error.middleware";
-import loginRoutes from "@/routes/login.routes";
-import registerRoutes from "@/routes/register.routes";
+import signRoutes from "@/routes/sign.routes";
 
 export class App {
 	private readonly _app: Application;
@@ -21,8 +20,7 @@ export class App {
 		this._app.use(helmet());
 		this._app.use(express.json());
 		this._app.use(express.urlencoded({ extended: true }));
-		this._app.use("/login", loginRoutes);
-		this._app.use("/register", registerRoutes);
+		this._app.use("/sign", signRoutes);
 		this._app.use(errorMiddleware);
 	}
 

@@ -19,6 +19,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/routes/sign.routes.ts"],
   "exclude": ["node_modules"]
 }
