@@ -29,6 +29,10 @@ class RegisterController {
 
 		res.json(await signService.login(correo, contrasena)).status(STATUS_CODES.OK);
 	}
+
+	async show_page(req: Request, res: Response): Promise<void> {
+		res.json().status(STATUS_CODES.OK);
+	}
 }
 
 export default new RegisterController();

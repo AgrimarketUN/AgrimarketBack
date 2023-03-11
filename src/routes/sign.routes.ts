@@ -2,6 +2,7 @@ import express from "express";
 
 import signController from "@/controllers/sign.controller";
 import asyncErrorMiddleware from "@/middlewares/asyncError.middleware";
+import authMiddleware from "@/middlewares/auth.middleware";
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ const router = express.Router();
 router.post("/register", asyncErrorMiddleware(signController.register));
 
 //Login routes
-router.get("/", asyncErrorMiddleware(signController.login));
+router.get("/", authMiddleware, asyncErrorMiddleware(signController.show_page));
 //router.get("/logout", asyncErrorMiddleware(signController.logout));
 router.post("/login", asyncErrorMiddleware(signController.login));
 
