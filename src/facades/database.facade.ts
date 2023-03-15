@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 
+import Product from "@/models/product";
 import User from "@/models/users";
 
 class DatabaseFacade {
@@ -29,6 +30,44 @@ class DatabaseFacade {
 				return false;
 			}
 		}
+	}
+
+	async getProducts(): Promise<any> {
+		const query = await Product.findAll();
+		return query;
+	}
+
+	async createProduct(
+		nombre_producto: any,
+		descripcion_producto: any,
+		precio: any,
+		imagen_producto: any,
+		categoria: any,
+		origen: any,
+		fecha_cosecha: any,
+		fecha_caducidad: any,
+		cantidad_disponible: any,
+		unidad_medida: any,
+		peso_por_unidad: any,
+		metodo_cultivo: any,
+		certificaciones_organicas: any
+	): Promise<any> {
+		const product = await Product.create({
+			nombre_producto: nombre_producto,
+			descripcion_producto: descripcion_producto,
+			precio: precio,
+			imagen_producto: imagen_producto,
+			categoria: categoria,
+			origen: origen,
+			fecha_cosecha: fecha_cosecha,
+			fecha_caducidad: fecha_caducidad,
+			cantidad_disponible: cantidad_disponible,
+			unidad_medida: unidad_medida,
+			peso_por_unidad: peso_por_unidad,
+			metodo_cultivo: metodo_cultivo,
+			certificaciones_organicas: certificaciones_organicas,
+		});
+		return product;
 	}
 }
 
