@@ -69,6 +69,28 @@ class DatabaseFacade {
 		});
 		return product;
 	}
+
+	async findProductBy(type: string, value: string): Promise<any> {
+		if (type === "nombre_producto") {
+			return await Product.findAll({ where: { nombre_producto: value } });
+		} else if (type === "categoria") {
+			return await Product.findAll({ where: { categoria: value } });
+		} else if (type === "origen") {
+			return await Product.findAll({ where: { origen: value } });
+		} else if (type === "precio") {
+			return await Product.findAll({ where: { precio: value } });
+		} else if (type === "descripcion_producto") {
+			return await Product.findAll({ where: { descripcion_producto: value } });
+		} else if (type === "fecha_cosecha") {
+			return await Product.findAll({ where: { fecha_cosecha: value } });
+		} else if (type === "fecha_caducidad") {
+			return await Product.findAll({ where: { fecha_caducidad: value } });
+		} else if (type === "metodo_cultivo") {
+			return await Product.findAll({ where: { methodo_cultivo: value } });
+		} else if (type === "certificaciones_organicas") {
+			return await Product.findAll({ where: { certificaciones_organicas: value } });
+		}
+	}
 }
 
 export default new DatabaseFacade();

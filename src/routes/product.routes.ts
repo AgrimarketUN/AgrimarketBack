@@ -8,5 +8,6 @@ const router = express.Router();
 
 router.get("/get", asyncErrorMiddleware(productController.getProducts));
 router.post("/create", asyncErrorMiddleware(productController.createProduct));
+router.post("/find", asyncErrorMiddleware(productController.findProduct));
 
 export default router;
