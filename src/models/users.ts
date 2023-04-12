@@ -34,6 +34,10 @@ const User = db.define(
 		telefono: {
 			type: DataTypes.STRING(20),
 		},
+		vendedor: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+		},
 	},
 	{
 		timestamps: false,

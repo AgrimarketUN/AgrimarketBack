@@ -38,6 +38,7 @@ class ProductController {
 			peso_por_unidad,
 			metodo_cultivo,
 			certificaciones_organicas,
+			vendedor,
 		} = req.body;
 		try {
 			const product = await databaseFacade.createProduct(
@@ -53,7 +54,8 @@ class ProductController {
 				unidad_medida,
 				peso_por_unidad,
 				metodo_cultivo,
-				certificaciones_organicas
+				certificaciones_organicas,
+				vendedor
 			);
 			if (product != null) {
 				res

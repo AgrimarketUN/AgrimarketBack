@@ -50,7 +50,8 @@ class DatabaseFacade {
 		unidad_medida: any,
 		peso_por_unidad: any,
 		metodo_cultivo: any,
-		certificaciones_organicas: any
+		certificaciones_organicas: any,
+		vendedor: any
 	): Promise<any> {
 		const product = await Product.create({
 			nombre_producto: nombre_producto,
@@ -66,6 +67,7 @@ class DatabaseFacade {
 			peso_por_unidad: peso_por_unidad,
 			metodo_cultivo: metodo_cultivo,
 			certificaciones_organicas: certificaciones_organicas,
+			vendedor: vendedor,
 		});
 		return product;
 	}
