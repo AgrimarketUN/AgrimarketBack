@@ -1,14 +1,13 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 
 import databaseFacade from "@/facades/database.facade";
 import signService from "@/services/sign.service";
 import { STATUS_CODES } from "@/utils/constants";
 
 class RegisterController {
-	//Register
-	async register(req: Request, res: Response, next: NextFunction): Promise<void> {
-		const { nombre, apellido, correo, contrasena, direccion, telefono } = req.body;
-		if (await databaseFacade.createUser(nombre, apellido, correo, contrasena, direccion, telefono)) {
+	async register(req: Request, res: Response): Promise<void> {
+		const { firstname, lastname, email, password } = req.body;
+		if (await databaseFacade.createUser(firstname, lastname, email, password)) {
 			res
 				.json({
 					msg: "Registro completado :)",
@@ -23,11 +22,9 @@ class RegisterController {
 		}
 	}
 
-	// Login
 	async login(req: Request, res: Response): Promise<void> {
-		const { correo, contrasena } = req.body;
-
-		res.json(await signService.login(correo, contrasena)).status(STATUS_CODES.OK);
+		const { email, password } = req.body;
+		res.json(await signService.login(email, password)).status(STATUS_CODES.OK);
 	}
 
 	async show_page(req: Request, res: Response): Promise<void> {

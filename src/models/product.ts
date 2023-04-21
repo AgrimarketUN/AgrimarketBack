@@ -1,57 +1,70 @@
 import { DataTypes } from "sequelize";
 
 import db from "@/db/connection";
+import Category from "@/models/categories";
+import Store from "@/models/stores";
 
 const Product = db.define(
 	"Product",
 	{
 		id: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.INTEGER.UNSIGNED,
 			primaryKey: true,
 			autoIncrement: true,
 			allowNull: false,
 		},
-		nombre_producto: {
+		name: {
 			type: DataTypes.STRING(255),
 			allowNull: false,
 		},
-		descripcion_producto: {
+		description: {
 			type: DataTypes.TEXT,
 		},
-		precio: {
+		price: {
 			type: DataTypes.DECIMAL(10, 2),
 			allowNull: false,
 		},
-		imagen_producto: {
+		image: {
 			type: DataTypes.STRING(255),
 		},
-		categoria: {
+		origin: {
 			type: DataTypes.STRING(255),
 		},
-		origen: {
-			type: DataTypes.STRING(255),
-		},
-		fecha_cosecha: {
+		expiryDate: {
 			type: DataTypes.DATE,
 		},
-		fecha_caducidad: {
+		harvestDate: {
 			type: DataTypes.DATE,
 		},
-		cantidad_disponible: {
+		availableQuantity: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		unidad_medida: {
+		unit: {
 			type: DataTypes.STRING(255),
 		},
-		peso_por_unidad: {
+		weight: {
 			type: DataTypes.DECIMAL(10, 2),
 		},
-		metodo_cultivo: {
+		cultivationMethod: {
 			type: DataTypes.STRING(255),
 		},
-		certificaciones_organicas: {
+		organicCertifications: {
 			type: DataTypes.TEXT,
+		},
+		categoryId: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			references: {
+				model: Category,
+				key: "id",
+			},
+		},
+		storeId: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			references: {
+				model: Store,
+				key: "id",
+			},
 		},
 		state: {
 			type: DataTypes.BOOLEAN,
@@ -59,11 +72,11 @@ const Product = db.define(
 		},
 	},
 	{
-		timestamps: false,
-		createdAt: false,
-		updatedAt: false,
 		tableName: "products",
 	}
 );
+
+Product.belongsTo(Category, { foreignKey: "categoryId" });
+Product.belongsTo(Store, { foreignKey: "storeId" });
 
 export default Product;

@@ -6,10 +6,10 @@ import databaseFacade from "@/facades/database.facade";
 
 class LoginService {
 	//Login
-	async login(correo: string, contrasena: string): Promise<any> {
-		if (await databaseFacade.compareDB(correo, contrasena)) {
+	async login(email: string, password: string): Promise<any> {
+		if (await databaseFacade.compareDB(email, password)) {
 			const payload = {
-				correo: correo,
+				email: email,
 			};
 			const token = this.genToken(payload);
 

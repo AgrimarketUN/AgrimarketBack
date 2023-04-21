@@ -6,43 +6,57 @@ const User = db.define(
 	"User",
 	{
 		id: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.INTEGER.UNSIGNED,
 			primaryKey: true,
 			autoIncrement: true,
 			allowNull: false,
 		},
-		nombre: {
+		firstname: {
 			type: DataTypes.STRING(50),
 			allowNull: false,
 		},
-		apellido: {
+		lastname: {
 			type: DataTypes.STRING(50),
 			allowNull: false,
 		},
-		correo: {
+		email: {
 			type: DataTypes.STRING(100),
 			allowNull: false,
 			unique: true,
+			validate: {
+				isEmail: true,
+			},
 		},
-		contrasena: {
+		password: {
 			type: DataTypes.STRING(100),
 			allowNull: false,
 		},
-		direccion: {
+		address: {
 			type: DataTypes.STRING(100),
 		},
-		telefono: {
+		phone: {
 			type: DataTypes.STRING(20),
 		},
-		vendedor: {
+		isSeller: {
 			type: DataTypes.BOOLEAN,
-			allowNull: false,
+			defaultValue: false,
+		},
+		role: {
+			type: DataTypes.ENUM("admin", "user"),
+			defaultValue: "user",
+			validate: {
+				isIn: [["admin", "user"]],
+			},
+		},
+		image: {
+			type: DataTypes.STRING(255),
+		},
+		state: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: true,
 		},
 	},
 	{
-		timestamps: false,
-		createdAt: false,
-		updatedAt: false,
 		tableName: "users",
 	}
 );
