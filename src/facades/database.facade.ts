@@ -1,9 +1,11 @@
 import bcryptjs from "bcryptjs";
 
 import Product from "@/models/product";
+import { ProductInput } from "@/models/product";
 import User from "@/models/users";
 
 class DatabaseFacade {
+
 	async createUser(firstname: string, lastname: string, email: string, password: string): Promise<boolean> {
 		const salt = bcryptjs.genSaltSync();
 		await User.create({
@@ -30,49 +32,17 @@ class DatabaseFacade {
 		}
 	}
 
-	async getProducts(): Promise<any> {
+	async getProducts(): Promise<typeof query> {
 		const query = await Product.findAll();
 		return query;
 	}
 
-	async createProduct(
-		name: string,
-		description: string,
-		price: number,
-		image: string,
-		origin: string,
-		expiryDate: Date,
-		harvestDate: Date,
-		availableQuantity: number,
-		unit: string,
-		weight: number,
-		cultivationMethod: string,
-		organicCertifications: string,
-		categoryId: number,
-		storeId: number,
-	): Promise<any> {
-		const product = await Product.create({
-			name:  name,
-			description: description,
-			price: price,
-			image: image,
-			origin: origin,
-			expiryDate: expiryDate,
-			harvestDate: harvestDate,
-			availableQuantity: availableQuantity,
-			unit: unit,
-			weight: weight,
-			cultivationMethod: cultivationMethod,
-			organicCertifications: organicCertifications,
-			categoryId: categoryId,
-			storeId: storeId,
-		}
-
-		);
+	async createProduct(payload: ProductInput): Promise< typeof product > {
+		const product = await Product.create(payload);
 		return product;
 	}
 
-	async findProductBy(type: string, value: string): Promise<any> {
+	async findProductBy(type: string, value: string): Promise< any > {
 		if (type === "name") {
 			return await Product.findAll({ where: { name: value } });
 		} else if (type === "price") {
