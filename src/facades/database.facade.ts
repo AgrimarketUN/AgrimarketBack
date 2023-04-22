@@ -36,59 +36,63 @@ class DatabaseFacade {
 	}
 
 	async createProduct(
-		nombre_producto: any,
-		descripcion_producto: any,
-		precio: any,
-		imagen_producto: any,
-		categoria: any,
-		origen: any,
-		fecha_cosecha: any,
-		fecha_caducidad: any,
-		cantidad_disponible: any,
-		unidad_medida: any,
-		peso_por_unidad: any,
-		metodo_cultivo: any,
-		certificaciones_organicas: any,
-		vendedor: any
+		name: string,
+		description: string,
+		price: number,
+		image: string,
+		origin: string,
+		expiryDate: Date,
+		harvestDate: Date,
+		availableQuantity: number,
+		unit: string,
+		weight: number,
+		cultivationMethod: string,
+		organicCertifications: string,
+		categoryId: number,
+		storeId: number,
 	): Promise<any> {
 		const product = await Product.create({
-			nombre_producto: nombre_producto,
-			descripcion_producto: descripcion_producto,
-			precio: precio,
-			imagen_producto: imagen_producto,
-			categoria: categoria,
-			origen: origen,
-			fecha_cosecha: fecha_cosecha,
-			fecha_caducidad: fecha_caducidad,
-			cantidad_disponible: cantidad_disponible,
-			unidad_medida: unidad_medida,
-			peso_por_unidad: peso_por_unidad,
-			metodo_cultivo: metodo_cultivo,
-			certificaciones_organicas: certificaciones_organicas,
-			vendedor: vendedor,
-		});
+			name:  name,
+			description: description,
+			price: price,
+			image: image,
+			origin: origin,
+			expiryDate: expiryDate,
+			harvestDate: harvestDate,
+			availableQuantity: availableQuantity,
+			unit: unit,
+			weight: weight,
+			cultivationMethod: cultivationMethod,
+			organicCertifications: organicCertifications,
+			categoryId: categoryId,
+			storeId: storeId,
+		}
+
+		);
 		return product;
 	}
 
 	async findProductBy(type: string, value: string): Promise<any> {
-		if (type === "nombre_producto") {
-			return await Product.findAll({ where: { nombre_producto: value } });
-		} else if (type === "categoria") {
-			return await Product.findAll({ where: { categoria: value } });
-		} else if (type === "origen") {
-			return await Product.findAll({ where: { origen: value } });
-		} else if (type === "precio") {
-			return await Product.findAll({ where: { precio: value } });
-		} else if (type === "descripcion_producto") {
-			return await Product.findAll({ where: { descripcion_producto: value } });
-		} else if (type === "fecha_cosecha") {
-			return await Product.findAll({ where: { fecha_cosecha: value } });
-		} else if (type === "fecha_caducidad") {
-			return await Product.findAll({ where: { fecha_caducidad: value } });
-		} else if (type === "metodo_cultivo") {
-			return await Product.findAll({ where: { methodo_cultivo: value } });
-		} else if (type === "certificaciones_organicas") {
-			return await Product.findAll({ where: { certificaciones_organicas: value } });
+		if (type === "name") {
+			return await Product.findAll({ where: { name: value } });
+		} else if (type === "price") {
+			return await Product.findAll({ where: { price: value } });
+		} else if (type === "origin") {
+			return await Product.findAll({ where: { origin: value } });
+		} else if (type === "expiryDate") {
+			return await Product.findAll({ where: { expiryDate: value } });
+		} else if (type === "harvestDate") {
+			return await Product.findAll({ where: { harvestDate: value } });
+		} else if (type === "availableQuantity") {
+			return await Product.findAll({ where: { availableQuantity: value } });
+		} else if (type === "unit") {
+			return await Product.findAll({ where: { unit: value } });
+		} else if (type === "cultivationMethod") {
+			return await Product.findAll({ where: { cultivationMethod: value } });
+		} else if (type === "categoryId") {
+			return await Product.findAll({ where: { categoryId: value } });
+		} else if (type === "storeId") {
+			return await Product.findAll({ where: { storeId: value } });
 		}
 	}
 }
