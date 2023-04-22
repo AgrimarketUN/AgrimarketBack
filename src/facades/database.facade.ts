@@ -4,29 +4,27 @@ import Product from "@/models/product";
 import User from "@/models/users";
 
 class DatabaseFacade {
-	//User creation in the DB
-	async createUser(nombre: string, apellido: string, correo: string, contrasena: string, direccion: string, telefono: string): Promise<boolean> {
+	async createUser(firstname: string, lastname: string, email: string, password: string): Promise<boolean> {
 		const salt = bcryptjs.genSaltSync();
-		const usuario = await User.create({
-			nombre: nombre,
-			apellido: apellido,
-			correo: correo,
-			contrasena: bcryptjs.hashSync(contrasena, salt),
-			direccion: direccion,
-			telefono: telefono,
+		await User.create({
+			firstname: firstname,
+			lastname: lastname,
+			email: email,
+			password: bcryptjs.hashSync(password, salt),
 		});
 		return true;
 	}
 
-	//Data verify in the DB
-	async compareDB(_correo: string, _contrasena: string): Promise<boolean> {
-		const query = await User.findOne({ where: { correo: _correo } });
+	async compareDB(_email: string, _password: string): Promise<boolean> {
+		const query = await User.findOne({ where: { email: _email } });
 		if (query === null) {
+			console.log("query null");
 			return false;
 		} else {
-			if (bcryptjs.compareSync(_contrasena, query.dataValues.contrasena)) {
+			if (bcryptjs.compareSync(_password, query.dataValues.password)) {
 				return true;
 			} else {
+				console.log("password incorrecto");
 				return false;
 			}
 		}

@@ -4,7 +4,7 @@ import databaseFacade from "@/facades/database.facade";
 import { STATUS_CODES } from "@/utils/constants";
 
 class ProductController {
-	async getProducts(req: Request, res: Response, next: NextFunction): Promise<void> {
+	async getProducts(req: Request, res: Response): Promise<void> {
 		try {
 			const query = await databaseFacade.getProducts();
 			res
@@ -23,7 +23,7 @@ class ProductController {
 		}
 	}
 
-	async createProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
+	async createProduct(req: Request, res: Response): Promise<void> {
 		const {
 			nombre_producto,
 			descripcion_producto,
