@@ -5,7 +5,6 @@ import { ProductInput } from "@/models/product";
 import User from "@/models/users";
 
 class DatabaseFacade {
-
 	async createUser(firstname: string, lastname: string, email: string, password: string): Promise<boolean> {
 		const salt = bcryptjs.genSaltSync();
 		await User.create({
@@ -37,12 +36,21 @@ class DatabaseFacade {
 		return query;
 	}
 
-	async createProduct(payload: ProductInput): Promise< typeof product > {
+	async createProduct(payload: ProductInput): Promise<typeof product> {
 		const product = await Product.create(payload);
 		return product;
 	}
 
-	async findProductBy(type: string, value: string): Promise< any > {
+	async updateProduct(payload: ProductInput, id: string): Promise<any> {
+		const product = await Product.findByPk(id);
+		if (!product) {
+			throw new Error("Product not found.");
+		}
+		const updateProduct = await product.update(payload);
+		return updateProduct;
+	}
+
+	async findProductBy(type: string, value: string): Promise<any> {
 		if (type === "name") {
 			return await Product.findAll({ where: { name: value } });
 		} else if (type === "price") {
@@ -64,6 +72,11 @@ class DatabaseFacade {
 		} else if (type === "storeId") {
 			return await Product.findAll({ where: { storeId: value } });
 		}
+	}
+
+	async deleteProduct(id: string): Promise<any> {
+		const deleteProduct = await Product.destroy({ where: { id: id } });
+		return deleteProduct;
 	}
 }
 

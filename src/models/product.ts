@@ -6,33 +6,27 @@ import Store from "@/models/stores";
 
 interface ProductAttributes {
 	id: number;
-	name: string,
-	description?: string,
-	price: number,
-	image?: string,
-	origin?: string,
-	expiryDate?: Date,
-	harvestDate?: Date,
-	availableQuantity?: number,
-	unit?: string,
-	weight?: number,
-	cultivationMethod?: string,
-	organicCertifications?: string,
-	categoryId: number,
-	storeId: number,
+	name: string;
+	description?: string;
+	price: number;
+	image?: string;
+	origin?: string;
+	expiryDate?: Date;
+	harvestDate?: Date;
+	availableQuantity?: number;
+	unit?: string;
+	weight?: number;
+	cultivationMethod?: string;
+	organicCertifications?: string;
+	categoryId: number;
+	storeId: number;
 }
 
-export type ProductInput = Optional<
-	ProductAttributes,
-	'id' | 'description' | 'image' | 'origin' | 'expiryDate' | 
-	'harvestDate' | 'unit' | 'weight' | 'cultivationMethod' |
-	'organicCertifications'>
+export type ProductInput = Optional<ProductAttributes, "id" | "description" | "image" | "origin" | "expiryDate" | "harvestDate" | "unit" | "weight" | "cultivationMethod" | "organicCertifications">;
 
-export type ProductOutput = Required<ProductAttributes>
+export type ProductOutput = Required<ProductAttributes>;
 
-const Product: ModelDefined<
-	ProductAttributes,
-	ProductInput> = db.define(
+const Product: ModelDefined<ProductAttributes, ProductInput> = db.define(
 	"Product",
 	{
 		id: {

@@ -26,23 +26,23 @@ class ProductController {
 
 	async createProduct(req: Request, res: Response): Promise<void> {
 		try {
-			const payload : ProductInput = {
-				name : req.body.name,
-				description : req.body.description,
-				price : req.body.price,
-				image : req.body.image,
-				origin : req.body.origin,
-				expiryDate : req.body.expiryDate,
-				harvestDate : req.body.harvestDate,
-				availableQuantity : req.body.availableQuantity,
-				unit : req.body.unit,
-				weight : req.body.weight,
-				cultivationMethod : req.body.cultivationMethod,
-				organicCertifications : req.body.organicCertifications,
-				categoryId : req.body.categoryId,
-				storeId : req.body.storeId
-			}
-			const product = await databaseFacade.createProduct( payload);
+			const payload: ProductInput = {
+				name: req.body.name,
+				description: req.body.description,
+				price: req.body.price,
+				image: req.body.image,
+				origin: req.body.origin,
+				expiryDate: req.body.expiryDate,
+				harvestDate: req.body.harvestDate,
+				availableQuantity: req.body.availableQuantity,
+				unit: req.body.unit,
+				weight: req.body.weight,
+				cultivationMethod: req.body.cultivationMethod,
+				organicCertifications: req.body.organicCertifications,
+				categoryId: req.body.categoryId,
+				storeId: req.body.storeId,
+			};
+			const product = await databaseFacade.createProduct(payload);
 			if (product != null) {
 				res
 					.json({
@@ -67,6 +67,40 @@ class ProductController {
 		}
 	}
 
+	async updateProduct(req: Request, res: Response): Promise<void> {
+		try {
+			const payload: ProductInput = {
+				name: req.body.name,
+				description: req.body.description,
+				price: req.body.price,
+				image: req.body.image,
+				origin: req.body.origin,
+				expiryDate: req.body.expiryDate,
+				harvestDate: req.body.harvestDate,
+				availableQuantity: req.body.availableQuantity,
+				unit: req.body.unit,
+				weight: req.body.weight,
+				cultivationMethod: req.body.cultivationMethod,
+				organicCertifications: req.body.organicCertifications,
+				categoryId: req.body.categoryId,
+				storeId: req.body.storeId,
+			};
+			const product = await databaseFacade.updateProduct(payload, req.params.id);
+			res
+				.json({
+					product,
+					msg: "Update Product",
+				})
+				.status(STATUS_CODES.CREATED);
+		} catch (error) {
+			res
+				.json({
+					error: error,
+				})
+				.status(STATUS_CODES.INTERNAL_ERROR);
+		}
+	}
+
 	async findProduct(req: Request, res: Response): Promise<void> {
 		const { type, parameter } = req.body;
 		try {
@@ -82,6 +116,25 @@ class ProductController {
 				.json({
 					error,
 					msg: "No se pudo obtener los productos",
+				})
+				.status(STATUS_CODES.INTERNAL_ERROR);
+		}
+	}
+
+	async deleteProduct(req: Request, res: Response): Promise<void> {
+		const { id } = req.params;
+		try {
+			const query = await databaseFacade.deleteProduct(id);
+			res
+				.json({
+					"Product ": query,
+					msg: "Delete Product Success",
+				})
+				.status(STATUS_CODES.OK);
+		} catch (error) {
+			res
+				.json({
+					error: error,
 				})
 				.status(STATUS_CODES.INTERNAL_ERROR);
 		}
