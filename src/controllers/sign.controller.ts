@@ -6,16 +6,13 @@ import { STATUS_CODES } from "@/utils/constants";
 
 class RegisterController {
 	async register(req: Request, res: Response): Promise<void> {
-		const { firstname, lastname, email, password } = req.body;
-		if (await databaseFacade.createUser(firstname, lastname, email, password)) {
+		const { firstname, lastname, email, password, phone } = req.body;
+		try {
+			res.json(await databaseFacade.createUser(firstname, lastname, email, password, phone)).status(STATUS_CODES.CREATED);
+		} catch (error) {
 			res
 				.json({
-					msg: "Registro completado :)",
-				})
-				.status(STATUS_CODES.CREATED);
-		} else {
-			res
-				.json({
+					error: error,
 					msg: "No se pudo completar el registro :(",
 				})
 				.status(STATUS_CODES.BAD_REQUEST);
