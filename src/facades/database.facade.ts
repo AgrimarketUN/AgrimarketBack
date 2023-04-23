@@ -79,8 +79,6 @@ class DatabaseFacade {
 			return await Product.findAll({ where: { origen: value } });
 		} else if (type === "precio") {
 			return await Product.findAll({ where: { precio: value } });
-		} else if (type === "descripcion_producto") {
-			return await Product.findAll({ where: { descripcion_producto: value } });
 		} else if (type === "fecha_cosecha") {
 			return await Product.findAll({ where: { fecha_cosecha: value } });
 		} else if (type === "fecha_caducidad") {
@@ -89,6 +87,15 @@ class DatabaseFacade {
 			return await Product.findAll({ where: { methodo_cultivo: value } });
 		} else if (type === "certificaciones_organicas") {
 			return await Product.findAll({ where: { certificaciones_organicas: value } });
+		}
+	}
+
+	async findEmail(value: string): Promise<any> {
+		const query = await User.findOne({ where: { email: value } });
+		if (query === null) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 }
