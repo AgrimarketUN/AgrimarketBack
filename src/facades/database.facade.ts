@@ -1,17 +1,19 @@
 import bcryptjs from "bcryptjs";
+import { Op } from "sequelize";
 
 import Product, { ProductOutput } from "@/models/product";
 import { ProductInput } from "@/models/product";
 import User from "@/models/users";
 
 class DatabaseFacade {
-	async createUser(firstname: string, lastname: string, email: string, password: string): Promise<boolean> {
+	async createUser(firstname: string, lastname: string, email: string, password: string, phone: string): Promise<boolean> {
 		const salt = bcryptjs.genSaltSync();
 		await User.create({
 			firstname: firstname,
 			lastname: lastname,
 			email: email,
 			password: bcryptjs.hashSync(password, salt),
+			phone: phone,
 		});
 		return true;
 	}
@@ -48,13 +50,13 @@ class DatabaseFacade {
 		return updateProduct;
 	}
 
-	async findProductBy(type: string, value: string): Promise<ProductOutput[] | undefined> {
+	async findProductBy(type: string, value: string | Array<number>): Promise<ProductOutput[] | undefined> {
 		if (type === "name") {
-			return await Product.findAll({ where: { name: value } });
+			return await Product.findAll({ where: { name: { [Op.like]: "%" + value + "%" } } });
 		} else if (type === "price") {
-			return await Product.findAll({ where: { price: value } });
+			return await Product.findAll({ where: { price: { [Op.between]: [value[0], value[1]] } } });
 		} else if (type === "origin") {
-			return await Product.findAll({ where: { origin: value } });
+			return await Product.findAll({ where: { origin: { [Op.like]: "%" + value + "%" } } });
 		} else if (type === "expiryDate") {
 			return await Product.findAll({ where: { expiryDate: value } });
 		} else if (type === "harvestDate") {
@@ -62,9 +64,9 @@ class DatabaseFacade {
 		} else if (type === "availableQuantity") {
 			return await Product.findAll({ where: { availableQuantity: value } });
 		} else if (type === "unit") {
-			return await Product.findAll({ where: { unit: value } });
+			return await Product.findAll({ where: { unit: { [Op.like]: "%" + value + "%" } } });
 		} else if (type === "cultivationMethod") {
-			return await Product.findAll({ where: { cultivationMethod: value } });
+			return await Product.findAll({ where: { cultivationMethod: { [Op.like]: "%" + value + "%" } } });
 		} else if (type === "categoryId") {
 			return await Product.findAll({ where: { categoryId: value } });
 		} else if (type === "storeId") {

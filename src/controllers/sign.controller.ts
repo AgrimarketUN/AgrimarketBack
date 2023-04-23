@@ -6,9 +6,9 @@ import { STATUS_CODES } from "@/utils/constants";
 
 class RegisterController {
 	async register(req: Request, res: Response): Promise<void> {
-		const { firstname, lastname, email, password } = req.body;
+		const { firstname, lastname, email, password, phone } = req.body;
 		try {
-			res.json(await databaseFacade.createUser(firstname, lastname, email, password)).status(STATUS_CODES.CREATED);
+			res.json(await databaseFacade.createUser(firstname, lastname, email, password, phone)).status(STATUS_CODES.CREATED);
 		} catch (error) {
 			res
 				.json({
