@@ -1,4 +1,4 @@
-import { DataTypes, ModelDefined, Optional } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 
 import db from "@/db/connection";
 import Category from "@/models/categories";
@@ -20,14 +20,40 @@ interface ProductAttributes {
 	organicCertifications?: string;
 	categoryId: number;
 	storeId: number;
+	state: boolean;
 }
 
-export type ProductInput = Optional<ProductAttributes, "id" | "description" | "image" | "origin" | "expiryDate" | "harvestDate" | "unit" | "weight" | "cultivationMethod" | "organicCertifications">;
+export type ProductInput = Optional<
+	ProductAttributes,
+	"id" | "description" | "image" | "origin" | "expiryDate" | "harvestDate" | "unit" | "weight" | "cultivationMethod" | "organicCertifications" | "state"
+>;
 
 export type ProductOutput = Required<ProductAttributes>;
 
-const Product: ModelDefined<ProductAttributes, ProductInput> = db.define(
-	"Product",
+class Product extends Model<ProductAttributes, ProductInput> implements ProductAttributes {
+	public id!: number;
+	public name!: string;
+	public description!: string;
+	public price!: number;
+	public image!: string;
+	public origin!: string;
+	public expiryDate!: Date;
+	public harvestDate!: Date;
+	public availableQuantity!: number;
+	public unit!: string;
+	public weight!: number;
+	public cultivationMethod!: string;
+	public organicCertifications!: string;
+	public categoryId!: number;
+	public storeId!: number;
+	public state!: boolean;
+
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
+	public readonly deletedAt!: Date;
+}
+
+Product.init(
 	{
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
@@ -95,6 +121,7 @@ const Product: ModelDefined<ProductAttributes, ProductInput> = db.define(
 	},
 	{
 		tableName: "products",
+		sequelize: db,
 	}
 );
 

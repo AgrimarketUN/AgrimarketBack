@@ -10,15 +10,14 @@ class ProductController {
 			const query = await databaseFacade.getProducts();
 			res
 				.json({
-					"productos ": query,
-					msg: "Productos obtenidos",
+					Products: query,
+					msg: "Products successfully found",
 				})
 				.status(STATUS_CODES.OK);
 		} catch (error) {
 			res
 				.json({
-					error,
-					msg: "No se pudo obtener los productos",
+					msg: "Products not found",
 				})
 				.status(STATUS_CODES.BAD_REQUEST);
 		}
@@ -47,21 +46,20 @@ class ProductController {
 				res
 					.json({
 						product,
-						msg: "Producto creado :)",
+						msg: "Product created",
 					})
 					.status(STATUS_CODES.CREATED);
 			} else {
 				res
 					.json({
-						msg: "No se pudo crear el producto :(",
+						msg: "Failed to create product",
 					})
 					.status(STATUS_CODES.BAD_REQUEST);
 			}
 		} catch (error) {
 			res
 				.json({
-					error,
-					msg: "Error en el servidor",
+					error: (error as Error).message,
 				})
 				.status(STATUS_CODES.INTERNAL_ERROR);
 		}
@@ -95,7 +93,7 @@ class ProductController {
 		} catch (error) {
 			res
 				.json({
-					error: error,
+					error: (error as Error).message,
 				})
 				.status(STATUS_CODES.INTERNAL_ERROR);
 		}
@@ -105,17 +103,19 @@ class ProductController {
 		const { type, parameter } = req.body;
 		try {
 			const query = await databaseFacade.findProductBy(type, parameter);
+			if (query == undefined || query.length == 0) {
+				throw new Error("No items were found");
+			}
 			res
 				.json({
-					"productos ": query,
-					msg: "Productos obtenidos",
+					Products: query,
+					msg: "Products successfully found",
 				})
 				.status(STATUS_CODES.OK);
 		} catch (error) {
 			res
 				.json({
-					error,
-					msg: "No se pudo obtener los productos",
+					error: (error as Error).message,
 				})
 				.status(STATUS_CODES.INTERNAL_ERROR);
 		}
@@ -125,6 +125,9 @@ class ProductController {
 		const { id } = req.params;
 		try {
 			const query = await databaseFacade.deleteProduct(id);
+			if (query == undefined || query == 0) {
+				throw new Error("No items were found to delete");
+			}
 			res
 				.json({
 					"Product ": query,
@@ -134,7 +137,7 @@ class ProductController {
 		} catch (error) {
 			res
 				.json({
-					error: error,
+					error: (error as Error).message,
 				})
 				.status(STATUS_CODES.INTERNAL_ERROR);
 		}

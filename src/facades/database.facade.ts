@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs";
 
-import Product from "@/models/product";
+import Product, { ProductOutput } from "@/models/product";
 import { ProductInput } from "@/models/product";
 import User from "@/models/users";
 
@@ -19,38 +19,36 @@ class DatabaseFacade {
 	async compareDB(_email: string, _password: string): Promise<boolean> {
 		const query = await User.findOne({ where: { email: _email } });
 		if (query === null) {
-			console.log("query null");
 			return false;
 		} else {
 			if (bcryptjs.compareSync(_password, query.dataValues.password)) {
 				return true;
 			} else {
-				console.log("password incorrecto");
 				return false;
 			}
 		}
 	}
 
-	async getProducts(): Promise<typeof query> {
+	async getProducts(): Promise<Product[]> {
 		const query = await Product.findAll();
 		return query;
 	}
 
-	async createProduct(payload: ProductInput): Promise<typeof product> {
+	async createProduct(payload: ProductInput): Promise<ProductOutput> {
 		const product = await Product.create(payload);
 		return product;
 	}
 
-	async updateProduct(payload: ProductInput, id: string): Promise<any> {
+	async updateProduct(payload: ProductInput, id: string): Promise<ProductOutput> {
 		const product = await Product.findByPk(id);
 		if (!product) {
-			throw new Error("Product not found.");
+			throw new Error("Product not found");
 		}
 		const updateProduct = await product.update(payload);
 		return updateProduct;
 	}
 
-	async findProductBy(type: string, value: string): Promise<any> {
+	async findProductBy(type: string, value: string): Promise<ProductOutput[] | undefined> {
 		if (type === "name") {
 			return await Product.findAll({ where: { name: value } });
 		} else if (type === "price") {
@@ -74,7 +72,7 @@ class DatabaseFacade {
 		}
 	}
 
-	async deleteProduct(id: string): Promise<any> {
+	async deleteProduct(id: string): Promise<number> {
 		const deleteProduct = await Product.destroy({ where: { id: id } });
 		return deleteProduct;
 	}
