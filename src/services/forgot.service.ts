@@ -1,17 +1,17 @@
 import "dotenv/config";
 
-import sgMail from "@sendgrid/mail"
-import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 import databaseFacade from "@/facades/database.facade";
-
+import User from "@/models/users";
+import send_email from "@/utils/sendEmail";
 
 class ForgotService {
-
-    key = <string>process.env.SENDGRID_API_KEY;
+	key = <string>process.env.SENDGRID_API_KEY;
 
 	async forgot(email: string): Promise<any> {
-		if (await databaseFacade.findEmail(email)) {
+		if ((await databaseFacade.findEmail(email)) != null) {
 			const payload = {
 				email: email,
 			};
@@ -28,23 +28,36 @@ class ForgotService {
 	}
 
 	async sendEmailForgot(email: string, token: any): Promise<any> {
-        
-        const html =  `
+		const html = `
             <div>
             <h1>Hello, you activated the reset password function</h1>
             <p>Please click the following link to reset your password.</p>
             <p>If you didn't ask for a password reset, please ignore this message.</p>
-            <a href="${process.env.DOMAIN}/resetPassword?t=${token}">Reset Password</a>
-        </div>`
-		const data = {
-            to: email,
-			from: process.env.EMAIL_FROM,
-			subject: "Reset Password Link",
-            text: "Please follow the instructions: ",
-			html,
-		};
+            <a href="${process.env.DOMAIN}/forgot/resetPassword?t=${token}">Reset Password</a>
+        </div>`;
 
-        return sgMail.send(data);
+		const subject = "Reset Password Link";
+
+		send_email(email, subject, html);
+	}
+
+	async resetPass(token: any, pass1: string) {
+		const salt = bcrypt.genSaltSync();
+		const email = <JwtPayload>jwt.decode(token);
+		const user = await databaseFacade.findEmail(email.email);
+		if (user != null) {
+			await User.update(
+				{ password: bcrypt.hashSync(pass1, salt) },
+				{
+					where: {
+						email: email.email,
+					},
+				}
+			);
+			return "Password changed successfully!";
+		} else {
+			return "Incorrect or expired password token";
+		}
 	}
 }
 

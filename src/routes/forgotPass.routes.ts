@@ -6,6 +6,7 @@ import asyncErrorMiddleware from "@/middlewares/asyncError.middleware";
 const router = express.Router();
 
 // Forgot Password routes
-router.post("/password", asyncErrorMiddleware(forgotController.forgotPass));
+router.post("/password", asyncErrorMiddleware(forgotController.forgotPassRequest));
+router.put("/resetPassword", asyncErrorMiddleware(forgotController.resetPassword));
 
 export default router;

@@ -15,6 +15,14 @@ class DatabaseFacade {
 		return true;
 	}
 
+	/*async updatePass(value: string, pass: string): Promise<boolean> {
+		const query = await User.findOne({ where: { email: value } }).then(User.getAttributes);
+		const salt = bcryptjs.genSaltSync();
+
+		query. = pass
+		return true;
+	}*/
+
 	async compareDB(_email: string, _password: string): Promise<boolean> {
 		const query = await User.findOne({ where: { email: _email } });
 		if (query === null) {
@@ -24,7 +32,7 @@ class DatabaseFacade {
 			if (bcryptjs.compareSync(_password, query.dataValues.password)) {
 				return true;
 			} else {
-				console.log("password incorrecto");
+				console.log("Password incorrecto");
 				return false;
 			}
 		}
@@ -93,9 +101,9 @@ class DatabaseFacade {
 	async findEmail(value: string): Promise<any> {
 		const query = await User.findOne({ where: { email: value } });
 		if (query === null) {
-			return false;
+			return null;
 		} else {
-			return true;
+			return query;
 		}
 	}
 }
