@@ -1,16 +1,19 @@
 import bcryptjs from "bcryptjs";
+import { Op } from "sequelize";
 
-import Product from "@/models/product";
+import Product, { ProductOutput } from "@/models/product";
+import { ProductInput } from "@/models/product";
 import User from "@/models/users";
 
 class DatabaseFacade {
-	async createUser(firstname: string, lastname: string, email: string, password: string): Promise<boolean> {
+	async createUser(firstname: string, lastname: string, email: string, password: string, phone: string): Promise<boolean> {
 		const salt = bcryptjs.genSaltSync();
 		await User.create({
 			firstname: firstname,
 			lastname: lastname,
 			email: email,
 			password: bcryptjs.hashSync(password, salt),
+			phone: phone,
 		});
 		return true;
 	}
@@ -26,7 +29,6 @@ class DatabaseFacade {
 	async compareDB(_email: string, _password: string): Promise<boolean> {
 		const query = await User.findOne({ where: { email: _email } });
 		if (query === null) {
-			console.log("query null");
 			return false;
 		} else {
 			if (bcryptjs.compareSync(_password, query.dataValues.password)) {
@@ -38,64 +40,52 @@ class DatabaseFacade {
 		}
 	}
 
-	async getProducts(): Promise<any> {
+	async getProducts(): Promise<Product[]> {
 		const query = await Product.findAll();
 		return query;
 	}
 
-	async createProduct(
-		nombre_producto: any,
-		descripcion_producto: any,
-		precio: any,
-		imagen_producto: any,
-		categoria: any,
-		origen: any,
-		fecha_cosecha: any,
-		fecha_caducidad: any,
-		cantidad_disponible: any,
-		unidad_medida: any,
-		peso_por_unidad: any,
-		metodo_cultivo: any,
-		certificaciones_organicas: any,
-		vendedor: any
-	): Promise<any> {
-		const product = await Product.create({
-			nombre_producto: nombre_producto,
-			descripcion_producto: descripcion_producto,
-			precio: precio,
-			imagen_producto: imagen_producto,
-			categoria: categoria,
-			origen: origen,
-			fecha_cosecha: fecha_cosecha,
-			fecha_caducidad: fecha_caducidad,
-			cantidad_disponible: cantidad_disponible,
-			unidad_medida: unidad_medida,
-			peso_por_unidad: peso_por_unidad,
-			metodo_cultivo: metodo_cultivo,
-			certificaciones_organicas: certificaciones_organicas,
-			vendedor: vendedor,
-		});
+	async createProduct(payload: ProductInput): Promise<ProductOutput> {
+		const product = await Product.create(payload);
 		return product;
 	}
 
-	async findProductBy(type: string, value: string): Promise<any> {
-		if (type === "nombre_producto") {
-			return await Product.findAll({ where: { nombre_producto: value } });
-		} else if (type === "categoria") {
-			return await Product.findAll({ where: { categoria: value } });
-		} else if (type === "origen") {
-			return await Product.findAll({ where: { origen: value } });
-		} else if (type === "precio") {
-			return await Product.findAll({ where: { precio: value } });
-		} else if (type === "fecha_cosecha") {
-			return await Product.findAll({ where: { fecha_cosecha: value } });
-		} else if (type === "fecha_caducidad") {
-			return await Product.findAll({ where: { fecha_caducidad: value } });
-		} else if (type === "metodo_cultivo") {
-			return await Product.findAll({ where: { methodo_cultivo: value } });
-		} else if (type === "certificaciones_organicas") {
-			return await Product.findAll({ where: { certificaciones_organicas: value } });
+	async updateProduct(payload: ProductInput, id: string): Promise<ProductOutput> {
+		const product = await Product.findByPk(id);
+		if (!product) {
+			throw new Error("Product not found");
 		}
+		const updateProduct = await product.update(payload);
+		return updateProduct;
+	}
+
+	async findProductBy(type: string, value: string | Array<number>): Promise<ProductOutput[] | undefined> {
+		if (type === "name") {
+			return await Product.findAll({ where: { name: { [Op.like]: "%" + value + "%" } } });
+		} else if (type === "price") {
+			return await Product.findAll({ where: { price: { [Op.between]: [value[0], value[1]] } } });
+		} else if (type === "origin") {
+			return await Product.findAll({ where: { origin: { [Op.like]: "%" + value + "%" } } });
+		} else if (type === "expiryDate") {
+			return await Product.findAll({ where: { expiryDate: value } });
+		} else if (type === "harvestDate") {
+			return await Product.findAll({ where: { harvestDate: value } });
+		} else if (type === "availableQuantity") {
+			return await Product.findAll({ where: { availableQuantity: value } });
+		} else if (type === "unit") {
+			return await Product.findAll({ where: { unit: { [Op.like]: "%" + value + "%" } } });
+		} else if (type === "cultivationMethod") {
+			return await Product.findAll({ where: { cultivationMethod: { [Op.like]: "%" + value + "%" } } });
+		} else if (type === "categoryId") {
+			return await Product.findAll({ where: { categoryId: value } });
+		} else if (type === "storeId") {
+			return await Product.findAll({ where: { storeId: value } });
+		}
+	}
+
+	async deleteProduct(id: string): Promise<number> {
+		const deleteProduct = await Product.destroy({ where: { id: id } });
+		return deleteProduct;
 	}
 
 	async findEmail(value: string): Promise<any> {
