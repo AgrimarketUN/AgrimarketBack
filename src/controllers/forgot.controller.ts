@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import forgotService from "@/services/forgot.service";
+import checkRequiredFields from "@/utils/checkfields";
 import { STATUS_CODES } from "@/utils/constants";
 
 class ForgotController {
@@ -23,10 +24,11 @@ class ForgotController {
 	}
 
 	async resetPassword(req: Request, res: Response): Promise<void> {
-		const token = req.query.token as string;
-		const newPass1 = req.body.newpass1;
-		const newPass2 = req.body.newpass2;
 		try {
+			checkRequiredFields(["newpass1", "newpass2"], req.body);
+			const token = req.query.token as string;
+			const newPass1 = req.body.newpass1;
+			const newPass2 = req.body.newpass2;
 			if (newPass1 == newPass2) {
 				await forgotService.resetPass(token, newPass1);
 				res

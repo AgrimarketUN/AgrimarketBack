@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 
 import databaseFacade from "@/facades/database.facade";
 import signService from "@/services/sign.service";
+import checkRequiredFields from "@/utils/checkfields";
 import { STATUS_CODES } from "@/utils/constants";
 
 class RegisterController {
 	async register(req: Request, res: Response): Promise<void> {
 		try {
+			checkRequiredFields(["firstname", "lastname", "email", "password", "phone", "address"], req.body);
 			const payload = {
 				firstname: req.body.firstname,
 				lastname: req.body.lastname,
@@ -33,8 +35,9 @@ class RegisterController {
 	}
 
 	async login(req: Request, res: Response): Promise<void> {
-		const { email, password } = req.body;
 		try {
+			checkRequiredFields(["email", "password"], req.body);
+			const { email, password } = req.body;
 			const token = await signService.login(email, password);
 			res
 				.json({

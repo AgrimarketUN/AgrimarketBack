@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 
 import databaseFacade from "@/facades/database.facade";
 import storeService from "@/services/store.service";
+import checkRequiredFields from "@/utils/checkfields";
 import { STATUS_CODES } from "@/utils/constants";
 
 class StoreController {
-	async getStores(req: Request, res: Response): Promise<void> {
+	async getStores(res: Response): Promise<void> {
 		try {
 			const stores = await databaseFacade.getStores();
 			res
@@ -27,6 +28,7 @@ class StoreController {
 	async createStore(req: Request, res: Response): Promise<void> {
 		try {
 			const token = req.headers.authorization;
+			checkRequiredFields(["name", "description", "address"], req.body);
 			const payload = {
 				name: req.body.name,
 				description: req.body.description,
