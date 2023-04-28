@@ -15,7 +15,7 @@ interface ReviewAttributes {
 	state: boolean;
 }
 
-export type ReviewInput = Omit<ReviewAttributes, "id" | "state" | "text" | "date" >;
+export type ReviewInput = Omit<ReviewAttributes, "id" | "state" | "text" | "date">;
 
 export type ReviewOutput = Required<ReviewAttributes>;
 

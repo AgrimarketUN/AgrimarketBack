@@ -1,8 +1,8 @@
 import bcryptjs from "bcryptjs";
 import { Op } from "sequelize";
 
-import Product, { ProductOutput } from "@/models/product";
-import { ProductInput } from "@/models/product";
+import Product, { ProductInput, ProductOutput } from "@/models/product";
+import Store, { StoreInput, StoreOutput } from "@/models/stores";
 import User, { UserInput, UserOutput } from "@/models/users";
 
 class DatabaseFacade {
@@ -48,12 +48,32 @@ class DatabaseFacade {
 	}
 
 	async findEmail(value: string): Promise<UserOutput> {
-		const query = await User.findOne({ where: { email: value } });
-		if (query != null) {
-			return query;
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			return user;
 		} else {
 			throw new Error("User not found");
 		}
+	}
+
+	// Store
+
+	async createStore(payload: StoreInput): Promise<StoreOutput> {
+		const query = await Store.findOne({ where: { name: payload.name } });
+		const query2 = await Store.findOne({ where: { userId: payload.userId } });
+		if (query2 != null) {
+			throw new Error("User already has a store");
+		} else if (query != null) {
+			throw new Error("Store already exists");
+		} else {
+			const store = await Store.create(payload);
+			return store;
+		}
+	}
+
+	async getStores(): Promise<StoreOutput[]> {
+		const store = await Store.findAll({ include: User });
+		return store;
 	}
 
 	// Product

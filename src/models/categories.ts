@@ -50,4 +50,27 @@ Category.init(
 	}
 );
 
+(async () => {
+	if ((await Category.count()) > 0) return;
+	await Category.create({
+		name: "Frutas",
+		description: "Frutos comestibles que se consumen frescos o se utilizan para preparar alimentos. Incluyen manzanas, bananas, naranjas, fresas, arándanos, entre otros.",
+	});
+	await Category.create({
+		name: "Verduras",
+		description: "Plantas comestibles que se consumen frescas o se utilizan para preparar alimentos. Incluyen lechuga, tomate, pepino, espinacas, zanahorias, entre otros.",
+	});
+	await Category.create({ name: "Producto animal", description: "Productos derivados de animales que se utilizan como alimento. Incluyen leche, queso, huevos, mantequilla, entre otros." });
+	await Category.create({
+		name: "Granos",
+		description: "Semillas comestibles que se utilizan como alimento o se procesan para elaborar otros productos. Incluyen arroz, trigo, maíz, avena, entre otros.",
+	});
+	await Category.create({
+		name: "Tubérculos",
+		description:
+			"Plantas comestibles que se caracterizan por tener un engrosamiento en la raíz. Se utilizan como alimento y para preparar productos derivados. Incluyen papas, boniatos, yucas, entre otros.",
+	});
+	console.log("Categorias creadas");
+})();
+
 export default Category;

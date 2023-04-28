@@ -8,12 +8,12 @@ interface StoreAttributes {
 	name: string;
 	description: string;
 	address: string;
-	userId: number;
+	userId?: number;
 	Image?: string;
 	state: boolean;
 }
 
-export type StoreInput = Omit<StoreAttributes, "id" | "state" | "Image" >;
+export type StoreInput = Omit<StoreAttributes, "id" | "state" | "Image">;
 
 export type StoreOutput = Required<StoreAttributes>;
 
