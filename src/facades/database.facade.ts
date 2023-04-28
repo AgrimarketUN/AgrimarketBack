@@ -3,19 +3,19 @@ import { Op } from "sequelize";
 
 import Product, { ProductOutput } from "@/models/product";
 import { ProductInput } from "@/models/product";
-import User from "@/models/users";
+import User, { UserInput, UserOutput } from "@/models/users";
 
 class DatabaseFacade {
-	async createUser(firstname: string, lastname: string, email: string, password: string, phone: string): Promise<boolean> {
-		const salt = bcryptjs.genSaltSync();
-		await User.create({
-			firstname: firstname,
-			lastname: lastname,
-			email: email,
-			password: bcryptjs.hashSync(password, salt),
-			phone: phone,
-		});
-		return true;
+	async createUser(payload: UserInput): Promise<UserOutput> {
+		const query = await User.findOne({ where: { email: payload.email } });
+		if (query === null) {
+			const salt = bcryptjs.genSaltSync();
+			payload.password = bcryptjs.hashSync(payload.password, salt);
+			const user = await User.create(payload);
+			return user;
+		} else {
+			throw new Error("User already exists");
+		}
 	}
 
 	/*async updatePass(value: string, pass: string): Promise<boolean> {
