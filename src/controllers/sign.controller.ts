@@ -34,7 +34,22 @@ class RegisterController {
 
 	async login(req: Request, res: Response): Promise<void> {
 		const { email, password } = req.body;
-		res.json(await signService.login(email, password)).status(STATUS_CODES.OK);
+		try {
+			const token = await signService.login(email, password);
+			res
+				.json({
+					token,
+					msg: "User logged in",
+				})
+				.status(STATUS_CODES.OK);
+		} catch (error) {
+			res
+				.json({
+					error: (error as Error).message,
+					msg: "There was an error logging in",
+				})
+				.status(STATUS_CODES.BAD_REQUEST);
+		}
 	}
 
 	async show_page(req: Request, res: Response): Promise<void> {

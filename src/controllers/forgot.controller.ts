@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 
-import databaseFacade from "@/facades/database.facade";
 import forgotService from "@/services/forgot.service";
 import { STATUS_CODES } from "@/utils/constants";
 
@@ -8,8 +7,12 @@ class ForgotController {
 	async forgotPassRequest(req: Request, res: Response): Promise<void> {
 		const { email } = req.body;
 		try {
-			await databaseFacade.findEmail(email);
-			res.json(await forgotService.sendEmailForgot(email)).status(STATUS_CODES.OK);
+			await forgotService.sendEmailForgot(email);
+			res
+				.json({
+					msg: "Email sent successfully!",
+				})
+				.status(STATUS_CODES.OK);
 		} catch (error) {
 			res
 				.json({

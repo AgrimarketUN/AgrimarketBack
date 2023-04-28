@@ -6,6 +6,8 @@ import { ProductInput } from "@/models/product";
 import User, { UserInput, UserOutput } from "@/models/users";
 
 class DatabaseFacade {
+	// User
+
 	async createUser(payload: UserInput): Promise<UserOutput> {
 		const query = await User.findOne({ where: { email: payload.email } });
 		if (query === null) {
@@ -18,24 +20,29 @@ class DatabaseFacade {
 		}
 	}
 
-	/*async updatePass(value: string, pass: string): Promise<boolean> {
-		const query = await User.findOne({ where: { email: value } }).then(User.getAttributes);
+	async updatePassword(value: string, pass: string): Promise<UserOutput> {
+		const user = await this.findEmail(value);
 		const salt = bcryptjs.genSaltSync();
+		await User.update(
+			{ password: bcryptjs.hashSync(pass, salt) },
+			{
+				where: {
+					email: value,
+				},
+			}
+		);
+		return user;
+	}
 
-		query. = pass
-		return true;
-	}*/
-
-	async compareDB(_email: string, _password: string): Promise<boolean> {
-		const query = await User.findOne({ where: { email: _email } });
-		if (query === null) {
-			return false;
+	async compareDB(_email: string, _password: string): Promise<UserOutput> {
+		const user = await User.findOne({ where: { email: _email } });
+		if (user == null) {
+			throw new Error("Invalid email");
 		} else {
-			if (bcryptjs.compareSync(_password, query.dataValues.password)) {
-				return true;
+			if (!bcryptjs.compareSync(_password, user.dataValues.password)) {
+				throw new Error("Invalid password");
 			} else {
-				console.log("Password incorrecto");
-				return false;
+				return user;
 			}
 		}
 	}

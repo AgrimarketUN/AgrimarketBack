@@ -1,16 +1,15 @@
 import "dotenv/config";
 
-import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 import databaseFacade from "@/facades/database.facade";
-import User from "@/models/users";
 import send_email from "@/utils/sendEmail";
 
 class ForgotService {
 	key = process.env.SENDGRID_API_KEY;
 
 	async sendEmailForgot(email: string): Promise<void> {
+		await databaseFacade.findEmail(email);
 		const payload = {
 			email: email,
 		};
@@ -35,18 +34,9 @@ class ForgotService {
 		return jwt.sign(payload, process.env.RESET_PASS_KEY as string, options);
 	}
 
-	async resetPass(token: string, pass1: string): Promise<void> {
-		const salt = bcrypt.genSaltSync();
+	async resetPass(token: string, password: string): Promise<void> {
 		const email = <JwtPayload>jwt.decode(token);
-		await databaseFacade.findEmail(email.email);
-		await User.update(
-			{ password: bcrypt.hashSync(pass1, salt) },
-			{
-				where: {
-					email: email.email,
-				},
-			}
-		);
+		await databaseFacade.updatePassword(email.email, password);
 	}
 }
 
