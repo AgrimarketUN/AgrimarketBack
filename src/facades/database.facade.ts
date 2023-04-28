@@ -40,6 +40,17 @@ class DatabaseFacade {
 		}
 	}
 
+	async findEmail(value: string): Promise<UserOutput> {
+		const query = await User.findOne({ where: { email: value } });
+		if (query != null) {
+			return query;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	// Product
+
 	async getProducts(): Promise<Product[]> {
 		const query = await Product.findAll();
 		return query;
@@ -86,15 +97,6 @@ class DatabaseFacade {
 	async deleteProduct(id: string): Promise<number> {
 		const deleteProduct = await Product.destroy({ where: { id: id } });
 		return deleteProduct;
-	}
-
-	async findEmail(value: string): Promise<any> {
-		const query = await User.findOne({ where: { email: value } });
-		if (query === null) {
-			return null;
-		} else {
-			return query;
-		}
 	}
 }
 
