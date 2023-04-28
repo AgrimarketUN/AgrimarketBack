@@ -1,9 +1,30 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 import db from "@/db/connection";
 
-const Category = db.define(
-	"Category",
+interface CategoryAttributes {
+	id: number;
+	name: string;
+	description?: string;
+	state: boolean;
+}
+
+export type CategoryInput = Omit<CategoryAttributes, "id" | "state">;
+
+export type CategoryOutput = Required<CategoryAttributes>;
+
+class Category extends Model<CategoryAttributes, CategoryInput> implements CategoryAttributes {
+	public id!: number;
+	public name!: string;
+	public description!: string;
+	public state!: boolean;
+
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
+	public readonly deletedAt!: Date;
+}
+
+Category.init(
 	{
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
@@ -25,6 +46,7 @@ const Category = db.define(
 	},
 	{
 		tableName: "categories",
+		sequelize: db,
 	}
 );
 

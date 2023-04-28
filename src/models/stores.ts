@@ -1,10 +1,37 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 import db from "@/db/connection";
 import User from "@/models/users";
 
-const Store = db.define(
-	"Store",
+interface StoreAttributes {
+	id: number;
+	name: string;
+	description: string;
+	address: string;
+	userId: number;
+	Image?: string;
+	state: boolean;
+}
+
+export type StoreInput = Omit<StoreAttributes, "id" | "state" | "Image" >;
+
+export type StoreOutput = Required<StoreAttributes>;
+
+class Store extends Model<StoreAttributes, StoreInput> implements StoreAttributes {
+	public id!: number;
+	public name!: string;
+	public description!: string;
+	public address!: string;
+	public userId!: number;
+	public Image!: string;
+	public state!: boolean;
+
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
+	public readonly deletedAt!: Date;
+}
+
+Store.init(
 	{
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
@@ -20,7 +47,7 @@ const Store = db.define(
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		adress: {
+		address: {
 			type: DataTypes.STRING(50),
 		},
 		userId: {
@@ -40,6 +67,7 @@ const Store = db.define(
 	},
 	{
 		tableName: "stores",
+		sequelize: db,
 	}
 );
 

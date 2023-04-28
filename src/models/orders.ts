@@ -1,12 +1,37 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 import db from "@/db/connection";
 import sequelize from "@/db/connection";
 import Product from "@/models/product";
 import User from "@/models/users";
 
-const Order = db.define(
-	"Order",
+interface OrderAttributes {
+	id: number;
+	date: Date;
+	quantity: number;
+	productId: number;
+	userId: number;
+	state: boolean;
+}
+
+export type OrderInput = Omit<OrderAttributes, "id" | "state">;
+
+export type OrderOutput = Required<OrderAttributes>;
+
+class Order extends Model<OrderAttributes, OrderInput> implements OrderAttributes {
+	public id!: number;
+	public date!: Date;
+	public quantity!: number;
+	public productId!: number;
+	public userId!: number;
+	public state!: boolean;
+
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
+	public readonly deletedAt!: Date;
+}
+
+Order.init(
 	{
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
@@ -43,6 +68,7 @@ const Order = db.define(
 	},
 	{
 		tableName: "orders",
+		sequelize: db,
 	}
 );
 
