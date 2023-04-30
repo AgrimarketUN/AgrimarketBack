@@ -5,16 +5,29 @@ import sequelize from "@/db/connection";
 import Product from "@/models/product";
 import User from "@/models/users";
 
+enum ShippingStatus {
+	IN_TRANSIT = "in_transit",
+	PENDING_DELIVERY = "pending_delivery",
+	DELIVERED = "delivered",
+	RETURNED = "returned",
+}
+
 interface OrderAttributes {
 	id: number;
 	date: Date;
 	quantity: number;
 	productId: number;
 	userId: number;
+	shippingStatus: ShippingStatus;
+	shippingDate?: Date;
+	deliveryDate?: Date;
+	trackingNumber?: string;
+	shippingMethod?: string;
+	shippingCost?: number;
 	state: boolean;
 }
 
-export type OrderInput = Omit<OrderAttributes, "id" | "state">;
+export type OrderInput = Omit<OrderAttributes, "id" | "state" | "shippingStatus" | "shippingDate" | "deliveryDate" | "trackingNumber">;
 
 export type OrderOutput = Required<OrderAttributes>;
 
@@ -24,6 +37,12 @@ class Order extends Model<OrderAttributes, OrderInput> implements OrderAttribute
 	public quantity!: number;
 	public productId!: number;
 	public userId!: number;
+	public shippingStatus!: ShippingStatus;
+	public shippingDate!: Date;
+	public deliveryDate!: Date;
+	public trackingNumber!: string;
+	public shippingMethod!: string;
+	public shippingCost!: number;
 	public state!: boolean;
 
 	public readonly createdAt!: Date;
@@ -61,6 +80,26 @@ Order.init(
 				key: "id",
 			},
 		},
+		shippingStatus: {
+			type: DataTypes.ENUM,
+			values: Object.values(ShippingStatus),
+			defaultValue: ShippingStatus.PENDING_DELIVERY,
+		},
+		shippingDate: {
+			type: DataTypes.DATE,
+		},
+		deliveryDate: {
+			type: DataTypes.DATE,
+		},
+		trackingNumber: {
+			type: DataTypes.STRING,
+		},
+		shippingMethod: {
+			type: DataTypes.STRING,
+		},
+		shippingCost: {
+			type: DataTypes.FLOAT,
+		},
 		state: {
 			type: DataTypes.BOOLEAN,
 			defaultValue: true,
@@ -77,7 +116,6 @@ Order.belongsTo(Product, { foreignKey: "productId" });
 
 (async () => {
 	await sequelize.sync();
-	console.log("Tabla order creada");
 })();
 
 export default Order;

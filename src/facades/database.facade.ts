@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import { Op } from "sequelize";
 
+import Order from "@/models/orders";
 import Product, { ProductInput, ProductOutput } from "@/models/product";
 import Store, { StoreInput, StoreOutput } from "@/models/stores";
 import User, { UserInput, UserOutput } from "@/models/users";
@@ -124,6 +125,13 @@ class DatabaseFacade {
 	async deleteProduct(id: string): Promise<number> {
 		const deleteProduct = await Product.destroy({ where: { id: id } });
 		return deleteProduct;
+	}
+
+	// Order
+
+	async getOrders(): Promise<Order[]> {
+		const order = await Order.findAll();
+		return order;
 	}
 }
 

@@ -5,6 +5,7 @@ import helmet from "helmet";
 import db from "@/db/connection";
 import errorMiddleware from "@/middlewares/error.middleware";
 import forgotRoutes from "@/routes/forgotPass.routes";
+import orderRoutes from "@/routes/order.routes";
 import productRoutes from "@/routes/product.routes";
 import signRoutes from "@/routes/sign.routes";
 import storeRoutes from "@/routes/store.routes";
@@ -24,6 +25,7 @@ export class App {
 		this._app.use(express.json());
 		this._app.use(express.urlencoded({ extended: true }));
 		this._app.use("/sign", signRoutes);
+		this._app.use("/order", orderRoutes);
 		this._app.use("/product", productRoutes);
 		this._app.use("/forgot", forgotRoutes);
 		this._app.use("/store", storeRoutes);

@@ -6,7 +6,7 @@ import checkRequiredFields from "@/utils/checkfields";
 import { STATUS_CODES } from "@/utils/constants";
 
 class StoreController {
-	async getStores(res: Response): Promise<void> {
+	async getStores(req: Request, res: Response): Promise<void> {
 		try {
 			const stores = await databaseFacade.getStores();
 			res

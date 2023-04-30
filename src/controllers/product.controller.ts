@@ -6,7 +6,7 @@ import checkRequiredFields from "@/utils/checkfields";
 import { STATUS_CODES } from "@/utils/constants";
 
 class ProductController {
-	async getProducts(res: Response): Promise<void> {
+	async getProducts(req: Request, res: Response): Promise<void> {
 		try {
 			const query = await databaseFacade.getProducts();
 			res
