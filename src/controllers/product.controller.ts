@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 
 import databaseFacade from "@/facades/database.facade";
 import { ProductInput } from "@/models/product";
+import checkRequiredFields from "@/utils/checkfields";
 import { STATUS_CODES } from "@/utils/constants";
 
 class ProductController {
-	async getProducts(req: Request, res: Response): Promise<void> {
+	async getProducts(res: Response): Promise<void> {
 		try {
 			const query = await databaseFacade.getProducts();
 			res
@@ -25,6 +26,7 @@ class ProductController {
 
 	async createProduct(req: Request, res: Response): Promise<void> {
 		try {
+			checkRequiredFields(["name", "price", "availableQuantity", "unit", "categoryId", "storeId"], req.body);
 			const payload: ProductInput = {
 				name: req.body.name,
 				description: req.body.description,
@@ -100,8 +102,9 @@ class ProductController {
 	}
 
 	async findProduct(req: Request, res: Response): Promise<void> {
-		const { type, parameter } = req.body;
 		try {
+			checkRequiredFields(["type", "parameter"], req.body);
+			const { type, parameter } = req.body;
 			const query = await databaseFacade.findProductBy(type, parameter);
 			if (query == undefined || query.length == 0) {
 				throw new Error("No items were found");

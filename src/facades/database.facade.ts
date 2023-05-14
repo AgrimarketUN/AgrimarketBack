@@ -1,44 +1,82 @@
 import bcryptjs from "bcryptjs";
 import { Op } from "sequelize";
 
-import Product, { ProductOutput } from "@/models/product";
-import { ProductInput } from "@/models/product";
-import User from "@/models/users";
+import Product, { ProductInput, ProductOutput } from "@/models/product";
+import Store, { StoreInput, StoreOutput } from "@/models/stores";
+import User, { UserInput, UserOutput } from "@/models/users";
 
 class DatabaseFacade {
-	async createUser(firstname: string, lastname: string, email: string, password: string, phone: string): Promise<boolean> {
-		const salt = bcryptjs.genSaltSync();
-		await User.create({
-			firstname: firstname,
-			lastname: lastname,
-			email: email,
-			password: bcryptjs.hashSync(password, salt),
-			phone: phone,
-		});
-		return true;
+	// User
+
+	async createUser(payload: UserInput): Promise<UserOutput> {
+		const query = await User.findOne({ where: { email: payload.email } });
+		if (query === null) {
+			const salt = bcryptjs.genSaltSync();
+			payload.password = bcryptjs.hashSync(payload.password, salt);
+			const user = await User.create(payload);
+			return user;
+		} else {
+			throw new Error("User already exists");
+		}
 	}
 
-	/*async updatePass(value: string, pass: string): Promise<boolean> {
-		const query = await User.findOne({ where: { email: value } }).then(User.getAttributes);
+	async updatePassword(value: string, pass: string): Promise<UserOutput> {
+		const user = await this.findEmail(value);
 		const salt = bcryptjs.genSaltSync();
+		await User.update(
+			{ password: bcryptjs.hashSync(pass, salt) },
+			{
+				where: {
+					email: value,
+				},
+			}
+		);
+		return user;
+	}
 
-		query. = pass
-		return true;
-	}*/
-
-	async compareDB(_email: string, _password: string): Promise<boolean> {
-		const query = await User.findOne({ where: { email: _email } });
-		if (query === null) {
-			return false;
+	async compareDB(_email: string, _password: string): Promise<UserOutput> {
+		const user = await User.findOne({ where: { email: _email } });
+		if (user == null) {
+			throw new Error("Invalid email");
 		} else {
-			if (bcryptjs.compareSync(_password, query.dataValues.password)) {
-				return true;
+			if (!bcryptjs.compareSync(_password, user.dataValues.password)) {
+				throw new Error("Invalid password");
 			} else {
-				console.log("Password incorrecto");
-				return false;
+				return user;
 			}
 		}
 	}
+
+	async findEmail(value: string): Promise<UserOutput> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			return user;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	// Store
+
+	async createStore(payload: StoreInput): Promise<StoreOutput> {
+		const query = await Store.findOne({ where: { name: payload.name } });
+		const query2 = await Store.findOne({ where: { userId: payload.userId } });
+		if (query2 != null) {
+			throw new Error("User already has a store");
+		} else if (query != null) {
+			throw new Error("Store already exists");
+		} else {
+			const store = await Store.create(payload);
+			return store;
+		}
+	}
+
+	async getStores(): Promise<StoreOutput[]> {
+		const store = await Store.findAll({ include: User });
+		return store;
+	}
+
+	// Product
 
 	async getProducts(): Promise<Product[]> {
 		const query = await Product.findAll();
@@ -86,15 +124,6 @@ class DatabaseFacade {
 	async deleteProduct(id: string): Promise<number> {
 		const deleteProduct = await Product.destroy({ where: { id: id } });
 		return deleteProduct;
-	}
-
-	async findEmail(value: string): Promise<any> {
-		const query = await User.findOne({ where: { email: value } });
-		if (query === null) {
-			return null;
-		} else {
-			return query;
-		}
 	}
 }
 
