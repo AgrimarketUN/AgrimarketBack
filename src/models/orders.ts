@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 
 import db from "@/db/connection";
 import sequelize from "@/db/connection";
@@ -27,7 +27,7 @@ interface OrderAttributes {
 	state: boolean;
 }
 
-export type OrderInput = Omit<OrderAttributes, "id" | "state" | "shippingStatus" | "shippingDate" | "deliveryDate" | "trackingNumber">;
+export type OrderInput = Optional<OrderAttributes, "id" | "userId" | "date" | "state" | "shippingStatus" | "shippingDate" | "deliveryDate" | "trackingNumber">;
 
 export type OrderOutput = Required<OrderAttributes>;
 
@@ -60,7 +60,7 @@ Order.init(
 		},
 		date: {
 			type: DataTypes.DATE,
-			allowNull: false,
+			defaultValue: DataTypes.NOW,
 		},
 		quantity: {
 			type: DataTypes.INTEGER.UNSIGNED,
