@@ -57,6 +57,15 @@ class DatabaseFacade {
 		}
 	}
 
+	async getUserRole(value: string): Promise<string> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			return user.dataValues.role;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
 	// Store
 
 	async createStore(payload: StoreInput): Promise<StoreOutput> {
@@ -85,8 +94,9 @@ class DatabaseFacade {
 	}
 
 	async getProduct(id: string): Promise<ProductOutput> {
+		// Return product with id also return product with false state
 		const query = await Product.findByPk(id);
-		if (!query || query.state === false) {
+		if (!query) {
 			throw new Error("Product not found");
 		}
 		return query;
