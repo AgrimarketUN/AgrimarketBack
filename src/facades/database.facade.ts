@@ -57,6 +57,24 @@ class DatabaseFacade {
 		}
 	}
 
+	async findUser(value: string): Promise<UserOutput> {
+		const user = await User.findOne({ where: { id: value } });
+		if (user != null) {
+			return user;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	async updateUser(payload: UserInput, id: string): Promise<UserOutput> {
+		const user = await User.findByPk(id);
+		if (!user) {
+			throw new Error("User not found");
+		}
+		const updateUser = await user.update(payload);
+		return updateUser;
+	}
+
 	// Store
 
 	async createStore(payload: StoreInput): Promise<StoreOutput> {
