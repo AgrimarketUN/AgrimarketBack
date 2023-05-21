@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 
 import Order, { OrderInput, OrderOutput } from "@/models/orders";
 import Product, { ProductInput, ProductOutput } from "@/models/product";
+import Review, { ReviewOutput } from "@/models/reviews";
 import Store, { StoreInput, StoreOutput } from "@/models/stores";
 import User, { UserInput, UserOutput } from "@/models/users";
 
@@ -65,7 +66,7 @@ class DatabaseFacade {
 			throw new Error("User not found");
 		}
 	}
-	
+
 	async getUserRole(value: string): Promise<string> {
 		const user = await User.findOne({ where: { email: value } });
 		if (user != null) {
@@ -189,6 +190,13 @@ class DatabaseFacade {
 	async buyProduct(payload: OrderInput): Promise<OrderOutput> {
 		const order = await Order.create(payload);
 		return order;
+	}
+
+	// Reviews
+
+	async getReviews(id: string): Promise<ReviewOutput[]> {
+		const review = await Review.findAll({ where: { productId: id } });
+		return review;
 	}
 }
 

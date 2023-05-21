@@ -91,7 +91,7 @@ Product.init(
 		unit: {
 			type: DataTypes.ENUM("Kg", "Lb", "Cubeta", "L"),
 			allowNull: false,
-			validate:{
+			validate: {
 				isIn: [["Kg", "Lb", "Cubeta", "L"]],
 			},
 		},

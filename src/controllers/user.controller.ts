@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import databaseFacade from "@/facades/database.facade";
 import { UserInput } from "@/models/users";
-import userService from "@/services/user.service"
+import userService from "@/services/user.service";
 import { STATUS_CODES } from "@/utils/constants";
 
 class UserController {
@@ -35,15 +35,16 @@ class UserController {
 	}
 
 	async profileUser(req: Request, res: Response): Promise<void> {
-        try {
-            const id = req.params.id as string;
+		try {
+			const id = req.params.id as string;
 			await userService.userProfile(id);
-        } catch(error){
-			res.json({
-				error: (error as Error).message,
-			})
-			.status(STATUS_CODES.BAD_REQUEST)
-        }
+		} catch (error) {
+			res
+				.json({
+					error: (error as Error).message,
+				})
+				.status(STATUS_CODES.BAD_REQUEST);
+		}
 	}
 }
 

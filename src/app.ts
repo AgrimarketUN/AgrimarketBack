@@ -7,6 +7,7 @@ import errorMiddleware from "@/middlewares/error.middleware";
 import forgotRoutes from "@/routes/forgotPass.routes";
 import orderRoutes from "@/routes/order.routes";
 import productRoutes from "@/routes/product.routes";
+import reviewRoutes from "@/routes/review.routes";
 import signRoutes from "@/routes/sign.routes";
 import storeRoutes from "@/routes/store.routes";
 import userRoutes from "@/routes/user.routes";
@@ -31,6 +32,7 @@ export class App {
 		this._app.use("/forgot", forgotRoutes);
 		this._app.use("/store", storeRoutes);
 		this._app.use("/user", userRoutes);
+		this._app.use("/review", reviewRoutes);
 		this._app.use(errorMiddleware);
 	}
 
