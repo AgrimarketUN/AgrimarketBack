@@ -1,7 +1,7 @@
 import bcryptjs from "bcryptjs";
 import { Op } from "sequelize";
 
-import Order from "@/models/orders";
+import Order, { OrderInput, OrderOutput } from "@/models/orders";
 import Product, { ProductInput, ProductOutput } from "@/models/product";
 import Store, { StoreInput, StoreOutput } from "@/models/stores";
 import User, { UserInput, UserOutput } from "@/models/users";
@@ -65,6 +65,15 @@ class DatabaseFacade {
 			throw new Error("User not found");
 		}
 	}
+	
+	async getUserRole(value: string): Promise<string> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			return user.dataValues.role;
+		} else {
+			throw new Error("User not found");
+		}
+	}
 
 	async updateUser(payload: UserInput, id: string): Promise<UserOutput> {
 		const user = await User.findByPk(id);
@@ -98,13 +107,34 @@ class DatabaseFacade {
 	// Product
 
 	async getProducts(): Promise<Product[]> {
-		const query = await Product.findAll();
+		const query = await Product.findAll({ where: { state: true } });
+		return query;
+	}
+
+	async getProduct(id: string): Promise<ProductOutput> {
+		// Return product with id also return product with false state
+		const query = await Product.findByPk(id);
+		if (!query) {
+			throw new Error("Product not found");
+		}
 		return query;
 	}
 
 	async createProduct(payload: ProductInput): Promise<ProductOutput> {
 		const product = await Product.create(payload);
 		return product;
+	}
+
+	async updateProductQuantity(payload: number, id: string): Promise<ProductOutput> {
+		const product = await Product.findByPk(id);
+		if (!product) {
+			throw new Error("Product not found");
+		}
+		const updateProduct = await product.update({ availableQuantity: payload });
+		if (updateProduct.availableQuantity === 0) {
+			await product.update({ state: false });
+		}
+		return updateProduct;
 	}
 
 	async updateProduct(payload: ProductInput, id: string): Promise<ProductOutput> {
@@ -118,37 +148,46 @@ class DatabaseFacade {
 
 	async findProductBy(type: string, value: string | Array<number>): Promise<ProductOutput[] | undefined> {
 		if (type === "name") {
-			return await Product.findAll({ where: { name: { [Op.like]: "%" + value + "%" } } });
+			return await Product.findAll({ where: { name: { [Op.like]: "%" + value + "%" }, state: true } });
 		} else if (type === "price") {
-			return await Product.findAll({ where: { price: { [Op.between]: [value[0], value[1]] } } });
+			return await Product.findAll({ where: { price: { [Op.between]: [value[0], value[1]] }, state: true } });
 		} else if (type === "origin") {
-			return await Product.findAll({ where: { origin: { [Op.like]: "%" + value + "%" } } });
+			return await Product.findAll({ where: { origin: { [Op.like]: "%" + value + "%" }, state: true } });
 		} else if (type === "expiryDate") {
-			return await Product.findAll({ where: { expiryDate: value } });
+			return await Product.findAll({ where: { expiryDate: value, state: true } });
 		} else if (type === "harvestDate") {
-			return await Product.findAll({ where: { harvestDate: value } });
+			return await Product.findAll({ where: { harvestDate: value, state: true } });
 		} else if (type === "availableQuantity") {
-			return await Product.findAll({ where: { availableQuantity: value } });
+			return await Product.findAll({ where: { availableQuantity: value, state: true } });
 		} else if (type === "unit") {
-			return await Product.findAll({ where: { unit: { [Op.like]: "%" + value + "%" } } });
+			return await Product.findAll({ where: { unit: { [Op.like]: "%" + value + "%" }, state: true } });
 		} else if (type === "cultivationMethod") {
-			return await Product.findAll({ where: { cultivationMethod: { [Op.like]: "%" + value + "%" } } });
+			return await Product.findAll({ where: { cultivationMethod: { [Op.like]: "%" + value + "%" }, state: true } });
 		} else if (type === "categoryId") {
-			return await Product.findAll({ where: { categoryId: value } });
+			return await Product.findAll({ where: { categoryId: value, state: true } });
 		} else if (type === "storeId") {
-			return await Product.findAll({ where: { storeId: value } });
+			return await Product.findAll({ where: { storeId: value, state: true } });
 		}
 	}
 
-	async deleteProduct(id: string): Promise<number> {
-		const deleteProduct = await Product.destroy({ where: { id: id } });
-		return deleteProduct;
+	async deleteProduct(id: string): Promise<ProductOutput> {
+		const product = await Product.findByPk(id);
+		if (!product) {
+			throw new Error("Product not found");
+		}
+		const query = await product.update({ state: false });
+		return query;
 	}
 
 	// Order
 
 	async getOrders(): Promise<Order[]> {
 		const order = await Order.findAll();
+		return order;
+	}
+
+	async buyProduct(payload: OrderInput): Promise<OrderOutput> {
+		const order = await Order.create(payload);
 		return order;
 	}
 }

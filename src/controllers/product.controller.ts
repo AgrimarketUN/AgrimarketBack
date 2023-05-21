@@ -128,9 +128,6 @@ class ProductController {
 		const { id } = req.params;
 		try {
 			const query = await databaseFacade.deleteProduct(id);
-			if (query == undefined || query == 0) {
-				throw new Error("No items were found to delete");
-			}
 			res
 				.json({
 					"Product ": query,

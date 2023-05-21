@@ -39,8 +39,10 @@ class RegisterController {
 			checkRequiredFields(["email", "password"], req.body);
 			const { email, password } = req.body;
 			const token = await signService.login(email, password);
+			const role = await databaseFacade.getUserRole(email);
 			res
 				.json({
+					role,
 					token,
 					msg: "User logged in",
 				})
