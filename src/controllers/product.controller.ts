@@ -6,7 +6,7 @@ import checkRequiredFields from "@/utils/checkfields";
 import { STATUS_CODES } from "@/utils/constants";
 
 class ProductController {
-	async getProducts(res: Response): Promise<void> {
+	async getProducts(req: Request, res: Response): Promise<void> {
 		try {
 			const query = await databaseFacade.getProducts();
 			res
@@ -128,9 +128,6 @@ class ProductController {
 		const { id } = req.params;
 		try {
 			const query = await databaseFacade.deleteProduct(id);
-			if (query == undefined || query == 0) {
-				throw new Error("No items were found to delete");
-			}
 			res
 				.json({
 					"Product ": query,

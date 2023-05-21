@@ -6,8 +6,6 @@ import databaseFacade from "@/facades/database.facade";
 import send_email from "@/utils/sendEmail";
 
 class ForgotService {
-	key = process.env.SENDGRID_API_KEY;
-
 	async sendEmailForgot(email: string): Promise<void> {
 		await databaseFacade.findEmail(email);
 		const payload = {
@@ -19,7 +17,7 @@ class ForgotService {
             <h1>Hello, you activated the reset password function</h1>
             <p>Please click the following link to reset your password.</p>
             <p>If you didn't ask for a password reset, please ignore this message.</p>
-            <a href="${process.env.DOMAIN}/forgot/resetPassword?t=${token}">Reset Password</a>
+            <a href="${process.env.DOMAIN}/restorePassword?t=${token}">Reset Password</a>
         </div>`;
 
 		const subject = "Reset Password Link";

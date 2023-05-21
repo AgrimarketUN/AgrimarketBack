@@ -25,10 +25,10 @@ class ForgotController {
 
 	async resetPassword(req: Request, res: Response): Promise<void> {
 		try {
-			checkRequiredFields(["newpass1", "newpass2"], req.body);
-			const token = req.query.token as string;
-			const newPass1 = req.body.newpass1;
-			const newPass2 = req.body.newpass2;
+			checkRequiredFields(["password", "confirmPassword"], req.body);
+			const token = req.query.t as string;
+			const newPass1 = req.body.password;
+			const newPass2 = req.body.confirmPassword;
 			if (newPass1 == newPass2) {
 				await forgotService.resetPass(token, newPass1);
 				res
