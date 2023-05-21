@@ -89,7 +89,11 @@ Product.init(
 			allowNull: false,
 		},
 		unit: {
-			type: DataTypes.STRING(255),
+			type: DataTypes.ENUM("Kg", "Lb", "Cubeta", "L"),
+			allowNull: false,
+			validate:{
+				isIn: [["Kg", "Lb", "Cubeta", "L"]],
+			},
 		},
 		weight: {
 			type: DataTypes.DECIMAL(10, 2),
