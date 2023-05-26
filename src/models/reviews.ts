@@ -1,7 +1,6 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 
 import db from "@/db/connection";
-import sequelize from "@/db/connection";
 import Product from "@/models/product";
 import User from "@/models/users";
 
@@ -15,7 +14,7 @@ interface ReviewAttributes {
 	state: boolean;
 }
 
-export type ReviewInput = Omit<ReviewAttributes, "id" | "state" | "text" | "date">;
+export type ReviewInput = Optional<ReviewAttributes, "id" | "state" | "text" | "date">;
 
 export type ReviewOutput = Required<ReviewAttributes>;
 
@@ -86,10 +85,5 @@ Review.init(
 
 Review.belongsTo(User, { foreignKey: "userId" });
 Review.belongsTo(Product, { foreignKey: "productId" });
-
-(async () => {
-	await sequelize.sync();
-	console.log("Tabla review creada");
-})();
 
 export default Review;

@@ -1,9 +1,10 @@
 import bcryptjs from "bcryptjs";
 import { Op } from "sequelize";
 
+import CartItem, { CartItemInput, CartItemOutput } from "@/models/cartItems";
 import Order, { OrderInput, OrderOutput } from "@/models/orders";
 import Product, { ProductInput, ProductOutput } from "@/models/product";
-import Review, { ReviewOutput } from "@/models/reviews";
+import Review, { ReviewInput, ReviewOutput } from "@/models/reviews";
 import Store, { StoreInput, StoreOutput } from "@/models/stores";
 import User, { UserInput, UserOutput } from "@/models/users";
 
@@ -197,6 +198,41 @@ class DatabaseFacade {
 	async getReviews(id: string): Promise<ReviewOutput[]> {
 		const review = await Review.findAll({ where: { productId: id } });
 		return review;
+	}
+
+	async createReview(payload: ReviewInput): Promise<ReviewOutput> {
+		const review = await Review.create(payload);
+		return review;
+	}
+
+	async deleteReview(id: number, userId: number): Promise<ReviewOutput> {
+		const review = await Review.findOne({ where: { productId: id, userId: userId } });
+		if (!review) {
+			throw new Error("Review not found");
+		}
+		await review.destroy();
+		return review;
+	}
+
+	// Cart
+
+	async getCart(id: number, userId: number): Promise<CartItemOutput[]> {
+		const cart = await CartItem.findAll({ where: { productId: id, userId: userId } });
+		return cart;
+	}
+
+	async addToCart(payload: CartItemInput): Promise<CartItemOutput> {
+		const cart = await CartItem.create(payload);
+		return cart;
+	}
+
+	async deleteFromCart(id: number, userId: number): Promise<CartItemOutput> {
+		const cart = await CartItem.findOne({ where: { productId: id, userId: userId } });
+		if (!cart) {
+			throw new Error("Cart not found");
+		}
+		await cart.destroy();
+		return cart;
 	}
 }
 

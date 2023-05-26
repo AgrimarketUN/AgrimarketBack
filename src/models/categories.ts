@@ -50,6 +50,8 @@ Category.init(
 	}
 );
 
+Category.sync();
+
 (async () => {
 	if ((await Category.count()) > 0) return;
 	//id: 1

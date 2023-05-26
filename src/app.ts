@@ -4,6 +4,14 @@ import helmet from "helmet";
 
 import db from "@/db/connection";
 import errorMiddleware from "@/middlewares/error.middleware";
+import CartItem from "@/models/cartItems";
+import Category from "@/models/categories";
+import Order from "@/models/orders";
+import Product from "@/models/product";
+import Review from "@/models/reviews";
+import Store from "@/models/stores";
+import User from "@/models/users";
+import cartRoutes from "@/routes/cart.routes";
 import forgotRoutes from "@/routes/forgotPass.routes";
 import orderRoutes from "@/routes/order.routes";
 import productRoutes from "@/routes/product.routes";
@@ -33,6 +41,7 @@ export class App {
 		this._app.use("/store", storeRoutes);
 		this._app.use("/user", userRoutes);
 		this._app.use("/review", reviewRoutes);
+		this._app.use("/cart", cartRoutes);
 		this._app.use(errorMiddleware);
 	}
 
@@ -40,6 +49,14 @@ export class App {
 		try {
 			db.authenticate();
 			console.log("Database is connected");
+			User.sync();
+			Category.sync();
+			Product.sync();
+			Store.sync();
+			Order.sync();
+			Review.sync();
+			CartItem.sync();
+			console.log("Models are synchronize");
 		} catch (error) {
 			console.log("Error connecting to database: ", error);
 		}

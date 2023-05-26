@@ -1,7 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
 
 import db from "@/db/connection";
-import sequelize from "@/db/connection";
 import Product from "@/models/product";
 import User from "@/models/users";
 
@@ -113,9 +112,5 @@ Order.init(
 
 Order.belongsTo(User, { foreignKey: "userId" });
 Order.belongsTo(Product, { foreignKey: "productId" });
-
-(async () => {
-	await sequelize.sync();
-})();
 
 export default Order;
