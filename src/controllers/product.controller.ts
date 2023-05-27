@@ -27,7 +27,7 @@ class ProductController {
 
 	async getProduct(req: Request, res: Response): Promise<void> {
 		try {
-			const query = await databaseFacade.getProduct(req.params.id);
+			const query = await databaseFacade.getProduct(+req.params.id);
 			res
 				.json({
 					Product: query,

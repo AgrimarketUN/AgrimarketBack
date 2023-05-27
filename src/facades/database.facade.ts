@@ -156,7 +156,7 @@ class DatabaseFacade {
 		return query;
 	}
 
-	async getProduct(id: string): Promise<ProductOutput> {
+	async getProduct(id: number): Promise<ProductOutput> {
 		// Return product with id also return product with false state
 		const query = await Product.findByPk(id);
 		if (!query) {
@@ -264,8 +264,8 @@ class DatabaseFacade {
 
 	// Cart
 
-	async getCart(id: number, userId: number): Promise<CartItemOutput[]> {
-		const cart = await CartItem.findAll({ where: { productId: id, userId: userId } });
+	async getCart(userId: number): Promise<CartItemOutput[]> {
+		const cart = await CartItem.findAll({ where: {userId: userId } });
 		return cart;
 	}
 

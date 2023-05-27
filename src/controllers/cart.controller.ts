@@ -7,9 +7,8 @@ import { STATUS_CODES } from "@/utils/constants";
 class CartController {
 	async getCart(req: Request, res: Response): Promise<void> {
 		try {
-			const { id } = req.params;
 			const token = req.headers.authorization;
-			const cart = await cartService.getCart(id, token as string);
+			const cart = await cartService.getCart(token as string);
 			res
 				.json({
 					cart,
@@ -64,6 +63,25 @@ class CartController {
 				.json({
 					error: (error as Error).message,
 					msg: "Error deleting product from cart",
+				})
+				.status(STATUS_CODES.BAD_REQUEST);
+		}
+	}
+
+	async buyCart(req: Request, res: Response): Promise<void> {
+		try {
+			const token = req.headers.authorization;
+			await cartService.buyCart(token as string);
+			res
+				.json({
+					msg: "Cart bought",
+				})
+				.status(STATUS_CODES.OK);
+		} catch (error) {
+			res
+				.json({
+					error: (error as Error).message,
+					msg: "Error buying cart",
 				})
 				.status(STATUS_CODES.BAD_REQUEST);
 		}
