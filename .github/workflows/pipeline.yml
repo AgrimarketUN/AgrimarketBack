@@ -1,4 +1,4 @@
-name: Docker Build & Publish
+name: Docker Build & Publish to Docker Hub & Push to GitHub Backend
 
 on:
   push:
@@ -25,3 +25,38 @@ jobs:
         context: .
         push: true
         tags: psiquedelos/is2_back:latest
+
+    - name: Configure SSH key
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Clone GitHub repository
+      run: git clone git@github.com:AgrimarketUN/AWS-Terraform-Pipeline.git
+
+    - name: Configurar identidad de usuario en Git
+      run: |
+        cd AWS-Terraform-Pipeline
+        git config user.email "dmirandam@unal.edu.co"
+        git config user.name "dmirandam"
+
+    - name: Create File
+      run: |
+        cd AWS-Terraform-Pipeline/logs
+        touch back-$(date +%Y%m%d%H%M%S)
+        ls -al
+        git init
+        git status
+
+    - name: Commit to GitHub repository
+      run: | 
+        cd AWS-Terraform-Pipeline
+        git add .
+        git commit -m "Add Docker image"
+
+    - name: Push changes to GitHub repository
+      run: |
+        cd AWS-Terraform-Pipeline
+        git push
