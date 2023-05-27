@@ -35,29 +35,29 @@ jobs:
         ssh-keyscan github.com >> ~/.ssh/known_hosts
 
     - name: Clone GitHub repository
-      run: git clone git@github.com:AgrimarketUN/AWS-Terraform-Pipeline.git
+      run: git clone git@github.com:AgrimarketUN/AWS-Terraform-Pipeline-Back.git
 
     - name: Configurar identidad de usuario en Git
       run: |
-        cd AWS-Terraform-Pipeline
+        cd AWS-Terraform-Pipeline-Back
         git config user.email "dmirandam@unal.edu.co"
         git config user.name "dmirandam"
 
     - name: Create File
       run: |
-        cd AWS-Terraform-Pipeline/logs
-        touch back-$(date +%Y%m%d%H%M%S)
+        cd AWS-Terraform-Pipeline-Back/logs
+        touch $(date +%Y%m%d%H%M%S)
         ls -al
         git init
         git status
 
     - name: Commit to GitHub repository
       run: | 
-        cd AWS-Terraform-Pipeline
+        cd AWS-Terraform-Pipeline-Back
         git add .
         git commit -m "New back Docker image"
 
     - name: Push changes to GitHub repository
       run: |
-        cd AWS-Terraform-Pipeline
+        cd AWS-Terraform-Pipeline-Back
         git push
