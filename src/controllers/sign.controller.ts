@@ -40,10 +40,12 @@ class RegisterController {
 			const { email, password } = req.body;
 			const token = await signService.login(email, password);
 			const role = await databaseFacade.getUserRole(email);
+			const isSeller = await databaseFacade.getisSeller(email);
 			res
 				.json({
 					role,
 					token,
+					isSeller,
 					msg: "User logged in",
 				})
 				.status(STATUS_CODES.OK);
