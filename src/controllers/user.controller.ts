@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 
-import databaseFacade from "@/facades/database.facade";
 import { UserInput } from "@/models/users";
 import userService from "@/services/user.service";
 import { STATUS_CODES } from "@/utils/constants";
@@ -19,7 +18,7 @@ class UserController {
 				image: req.body.image,
 				state: req.body.state,
 			};
-			const user = await databaseFacade.updateUser(payload, token as string);
+			const user = await userService.updateUser(token as string, payload);
 			res
 				.json({
 					user,
