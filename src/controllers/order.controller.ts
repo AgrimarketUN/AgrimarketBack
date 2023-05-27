@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 
-import databaseFacade from "@/facades/database.facade";
 import { OrderInput } from "@/models/orders";
 import orderService from "@/services/order.service";
 import checkRequiredFields from "@/utils/checkfields";
@@ -9,7 +8,8 @@ import { STATUS_CODES } from "@/utils/constants";
 class OrderController {
 	async getOrders(req: Request, res: Response): Promise<void> {
 		try {
-			const query = await databaseFacade.getOrders();
+			const token = req.headers.authorization;
+			const query = await orderService.getOrder(token as string);
 			res
 				.json({
 					Orders: query,
