@@ -6,6 +6,14 @@ import databaseFacade from "@/facades/database.facade";
 import { OrderInput, OrderOutput } from "@/models/orders";
 
 class OrderService {
+	async getOrder(token: string): Promise<OrderOutput[]> {
+		token = token.split(" ")[1];
+		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+		const id = (await databaseFacade.findEmail(decoded.email)).id;
+		const orders = await databaseFacade.getMyOrders(id);
+		return orders;
+	}
+
 	async buyProduct(payload: OrderInput, token: string): Promise<OrderOutput> {
 		token = token.split(" ")[1];
 		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);

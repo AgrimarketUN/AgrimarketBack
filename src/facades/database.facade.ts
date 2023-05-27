@@ -207,6 +207,11 @@ class DatabaseFacade {
 		return order;
 	}
 
+	async getMyOrders(id: number): Promise<OrderOutput[]> {
+		const order = await Order.findAll({ where: { userId: id } });
+		return order;
+	}
+
 	async buyProduct(payload: OrderInput): Promise<OrderOutput> {
 		const order = await Order.create(payload);
 		return order;

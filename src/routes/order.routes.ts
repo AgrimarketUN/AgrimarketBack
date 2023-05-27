@@ -6,7 +6,7 @@ import authMiddleware from "@/middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.get("/get", asyncErrorMiddleware(orderController.getOrders));
+router.get("/get", authMiddleware, asyncErrorMiddleware(orderController.getOrders));
 router.post("/buy", authMiddleware, asyncErrorMiddleware(orderController.buyProduct));
 
 export default router;
