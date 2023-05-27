@@ -8,6 +8,7 @@ import { STATUS_CODES } from "@/utils/constants";
 class UserController {
 	async updateUser(req: Request, res: Response): Promise<void> {
 		try {
+			const token = req.headers.authorization;
 			const payload: UserInput = {
 				firstname: req.body.firstname,
 				lastname: req.body.lastname,
@@ -18,7 +19,7 @@ class UserController {
 				image: req.body.image,
 				state: req.body.state,
 			};
-			const user = await databaseFacade.updateUser(payload, req.params.id);
+			const user = await databaseFacade.updateUser(payload, token as string);
 			res
 				.json({
 					user,
@@ -36,8 +37,14 @@ class UserController {
 
 	async profileUser(req: Request, res: Response): Promise<void> {
 		try {
-			const id = req.params.id as string;
-			await userService.userProfile(id);
+			const token = req.headers.authorization;
+			const user = await userService.userProfile(token as string);
+			res
+				.json({
+					user,
+					msg: "User retrieved successfully",
+				})
+				.status(STATUS_CODES.OK);
 		} catch (error) {
 			res
 				.json({

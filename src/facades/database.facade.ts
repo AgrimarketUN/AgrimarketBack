@@ -96,7 +96,7 @@ class DatabaseFacade {
 		}
 	}
 
-	async updateUser(payload: UserInput, id: string): Promise<UserOutput> {
+	async updateUser(payload: UserInput, id: number): Promise<UserOutput> {
 		const user = await User.findByPk(id);
 		if (!user) {
 			throw new Error("User not found");
