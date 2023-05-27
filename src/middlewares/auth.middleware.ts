@@ -9,7 +9,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		if (auth === null) {
 			res
 				.json({
-					msg: "No existe el token de autorización",
+					msg: "Autorization token not found",
 				})
 				.status(STATUS_CODES.NOT_FOUND);
 		}
@@ -20,7 +20,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		} catch (error) {
 			res
 				.json({
-					msg: "El token de autorización no sirve",
+					msg: "Invalid token",
 				})
 				.status(STATUS_CODES.UNAUTHORIZED);
 		}

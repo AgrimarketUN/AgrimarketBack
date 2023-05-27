@@ -1,53 +1,161 @@
 import bcryptjs from "bcryptjs";
 import { Op } from "sequelize";
 
-import Product, { ProductOutput } from "@/models/product";
-import { ProductInput } from "@/models/product";
-import User from "@/models/users";
+import CartItem, { CartItemInput, CartItemOutput } from "@/models/cartItems";
+import Order, { OrderInput, OrderOutput } from "@/models/orders";
+import Product, { ProductInput, ProductOutput } from "@/models/product";
+import Review, { ReviewInput, ReviewOutput } from "@/models/reviews";
+import Store, { StoreInput, StoreOutput } from "@/models/stores";
+import User, { UserInput, UserOutput } from "@/models/users";
 
 class DatabaseFacade {
-	async createUser(firstname: string, lastname: string, email: string, password: string, phone: string): Promise<boolean> {
-		const salt = bcryptjs.genSaltSync();
-		await User.create({
-			firstname: firstname,
-			lastname: lastname,
-			email: email,
-			password: bcryptjs.hashSync(password, salt),
-			phone: phone,
-		});
-		return true;
+	// User
+
+	async createUser(payload: UserInput): Promise<UserOutput> {
+		const query = await User.findOne({ where: { email: payload.email } });
+		if (query === null) {
+			const salt = bcryptjs.genSaltSync();
+			payload.password = bcryptjs.hashSync(payload.password, salt);
+			const user = await User.create(payload);
+			return user;
+		} else {
+			throw new Error("User already exists");
+		}
 	}
 
-	/*async updatePass(value: string, pass: string): Promise<boolean> {
-		const query = await User.findOne({ where: { email: value } }).then(User.getAttributes);
+	async updatePassword(value: string, pass: string): Promise<UserOutput> {
+		const user = await this.findEmail(value);
 		const salt = bcryptjs.genSaltSync();
+		await User.update(
+			{ password: bcryptjs.hashSync(pass, salt) },
+			{
+				where: {
+					email: value,
+				},
+			}
+		);
+		return user;
+	}
 
-		query. = pass
-		return true;
-	}*/
-
-	async compareDB(_email: string, _password: string): Promise<boolean> {
-		const query = await User.findOne({ where: { email: _email } });
-		if (query === null) {
-			return false;
+	async compareDB(_email: string, _password: string): Promise<UserOutput> {
+		const user = await User.findOne({ where: { email: _email } });
+		if (user == null) {
+			throw new Error("Invalid email");
 		} else {
-			if (bcryptjs.compareSync(_password, query.dataValues.password)) {
-				return true;
+			if (!bcryptjs.compareSync(_password, user.dataValues.password)) {
+				throw new Error("Invalid password");
 			} else {
-				console.log("Password incorrecto");
-				return false;
+				return user;
 			}
 		}
 	}
 
+	async findEmail(value: string): Promise<UserOutput> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			return user;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	async findUser(value: string): Promise<UserOutput> {
+		const user = await User.findOne({ where: { id: value } });
+		if (user != null) {
+			return user;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	async getUserRole(value: string): Promise<string> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			return user.dataValues.role;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	async getisSeller(value: string): Promise<boolean> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			return user.dataValues.isSeller;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	async updateisSeller(value: string, isSeller: boolean): Promise<UserOutput> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			const updateisSeller = await user.update({ isSeller: isSeller });
+			return updateisSeller;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	async updateUser(payload: UserInput, id: string): Promise<UserOutput> {
+		const user = await User.findByPk(id);
+		if (!user) {
+			throw new Error("User not found");
+		}
+		const updateUser = await user.update(payload);
+		return updateUser;
+	}
+
+	// Store
+
+	async createStore(payload: StoreInput): Promise<StoreOutput> {
+		const query = await Store.findOne({ where: { name: payload.name } });
+		const query2 = await Store.findOne({ where: { userId: payload.userId } });
+		if (query2 != null) {
+			throw new Error("User already has a store");
+		} else if (query != null) {
+			throw new Error("Store already exists");
+		} else {
+			const store = await Store.create(payload);
+			return store;
+		}
+	}
+
+	async getStores(): Promise<StoreOutput[]> {
+		const store = await Store.findAll({ include: User });
+		return store;
+	}
+
+	// Product
+
 	async getProducts(): Promise<Product[]> {
-		const query = await Product.findAll();
+		const query = await Product.findAll({ where: { state: true } });
+		return query;
+	}
+
+	async getProduct(id: string): Promise<ProductOutput> {
+		// Return product with id also return product with false state
+		const query = await Product.findByPk(id);
+		if (!query) {
+			throw new Error("Product not found");
+		}
 		return query;
 	}
 
 	async createProduct(payload: ProductInput): Promise<ProductOutput> {
 		const product = await Product.create(payload);
 		return product;
+	}
+
+	async updateProductQuantity(payload: number, id: string): Promise<ProductOutput> {
+		const product = await Product.findByPk(id);
+		if (!product) {
+			throw new Error("Product not found");
+		}
+		const updateProduct = await product.update({ availableQuantity: payload });
+		if (updateProduct.availableQuantity === 0) {
+			await product.update({ state: false });
+		}
+		return updateProduct;
 	}
 
 	async updateProduct(payload: ProductInput, id: string): Promise<ProductOutput> {
@@ -61,40 +169,89 @@ class DatabaseFacade {
 
 	async findProductBy(type: string, value: string | Array<number>): Promise<ProductOutput[] | undefined> {
 		if (type === "name") {
-			return await Product.findAll({ where: { name: { [Op.like]: "%" + value + "%" } } });
+			return await Product.findAll({ where: { name: { [Op.like]: "%" + value + "%" }, state: true } });
 		} else if (type === "price") {
-			return await Product.findAll({ where: { price: { [Op.between]: [value[0], value[1]] } } });
+			return await Product.findAll({ where: { price: { [Op.between]: [value[0], value[1]] }, state: true } });
 		} else if (type === "origin") {
-			return await Product.findAll({ where: { origin: { [Op.like]: "%" + value + "%" } } });
+			return await Product.findAll({ where: { origin: { [Op.like]: "%" + value + "%" }, state: true } });
 		} else if (type === "expiryDate") {
-			return await Product.findAll({ where: { expiryDate: value } });
+			return await Product.findAll({ where: { expiryDate: value, state: true } });
 		} else if (type === "harvestDate") {
-			return await Product.findAll({ where: { harvestDate: value } });
+			return await Product.findAll({ where: { harvestDate: value, state: true } });
 		} else if (type === "availableQuantity") {
-			return await Product.findAll({ where: { availableQuantity: value } });
+			return await Product.findAll({ where: { availableQuantity: value, state: true } });
 		} else if (type === "unit") {
-			return await Product.findAll({ where: { unit: { [Op.like]: "%" + value + "%" } } });
+			return await Product.findAll({ where: { unit: { [Op.like]: "%" + value + "%" }, state: true } });
 		} else if (type === "cultivationMethod") {
-			return await Product.findAll({ where: { cultivationMethod: { [Op.like]: "%" + value + "%" } } });
+			return await Product.findAll({ where: { cultivationMethod: { [Op.like]: "%" + value + "%" }, state: true } });
 		} else if (type === "categoryId") {
-			return await Product.findAll({ where: { categoryId: value } });
+			return await Product.findAll({ where: { categoryId: value, state: true } });
 		} else if (type === "storeId") {
-			return await Product.findAll({ where: { storeId: value } });
+			return await Product.findAll({ where: { storeId: value, state: true } });
 		}
 	}
 
-	async deleteProduct(id: string): Promise<number> {
-		const deleteProduct = await Product.destroy({ where: { id: id } });
-		return deleteProduct;
+	async deleteProduct(id: string): Promise<ProductOutput> {
+		const product = await Product.findByPk(id);
+		if (!product) {
+			throw new Error("Product not found");
+		}
+		const query = await product.update({ state: false });
+		return query;
 	}
 
-	async findEmail(value: string): Promise<any> {
-		const query = await User.findOne({ where: { email: value } });
-		if (query === null) {
-			return null;
-		} else {
-			return query;
+	// Order
+
+	async getOrders(): Promise<Order[]> {
+		const order = await Order.findAll();
+		return order;
+	}
+
+	async buyProduct(payload: OrderInput): Promise<OrderOutput> {
+		const order = await Order.create(payload);
+		return order;
+	}
+
+	// Reviews
+
+	async getReviews(id: string): Promise<ReviewOutput[]> {
+		const review = await Review.findAll({ where: { productId: id } });
+		return review;
+	}
+
+	async createReview(payload: ReviewInput): Promise<ReviewOutput> {
+		const review = await Review.create(payload);
+		return review;
+	}
+
+	async deleteReview(id: number, userId: number): Promise<ReviewOutput> {
+		const review = await Review.findOne({ where: { productId: id, userId: userId } });
+		if (!review) {
+			throw new Error("Review not found");
 		}
+		await review.destroy();
+		return review;
+	}
+
+	// Cart
+
+	async getCart(id: number, userId: number): Promise<CartItemOutput[]> {
+		const cart = await CartItem.findAll({ where: { productId: id, userId: userId } });
+		return cart;
+	}
+
+	async addToCart(payload: CartItemInput): Promise<CartItemOutput> {
+		const cart = await CartItem.create(payload);
+		return cart;
+	}
+
+	async deleteFromCart(id: number, userId: number): Promise<CartItemOutput> {
+		const cart = await CartItem.findOne({ where: { productId: id, userId: userId } });
+		if (!cart) {
+			throw new Error("Cart not found");
+		}
+		await cart.destroy();
+		return cart;
 	}
 }
 
