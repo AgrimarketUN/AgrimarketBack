@@ -25,7 +25,7 @@ interface ProductAttributes {
 
 export type ProductInput = Optional<
 	ProductAttributes,
-	"id" | "description" | "image" | "origin" | "expiryDate" | "harvestDate" | "unit" | "weight" | "cultivationMethod" | "organicCertifications" | "state"
+	"id" | "description" | "image" | "origin" | "expiryDate" | "harvestDate" | "unit" | "weight" | "cultivationMethod" | "organicCertifications" | "storeId" | "state"
 >;
 
 export type ProductOutput = Required<ProductAttributes>;
