@@ -5,7 +5,7 @@ on:
     branches:
       - dev
 
-      
+
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
       run: | 
         cd AWS-Terraform-Pipeline
         git add .
-        git commit -m "Add Docker image"
+        git commit -m "New back Docker image"
 
     - name: Push changes to GitHub repository
       run: |
