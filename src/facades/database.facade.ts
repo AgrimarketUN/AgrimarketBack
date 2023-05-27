@@ -77,6 +77,25 @@ class DatabaseFacade {
 		}
 	}
 
+	async getisSeller(value: string): Promise<boolean> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			return user.dataValues.isSeller;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
+	async updateisSeller(value: string, isSeller: boolean): Promise<UserOutput> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			const updateisSeller = await user.update({ isSeller: isSeller });
+			return updateisSeller;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
 	async updateUser(payload: UserInput, id: string): Promise<UserOutput> {
 		const user = await User.findByPk(id);
 		if (!user) {

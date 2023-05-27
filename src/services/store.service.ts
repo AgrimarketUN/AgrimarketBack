@@ -9,6 +9,7 @@ class StoreService {
 		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
 		payload.userId = (await databaseFacade.findEmail(decoded.email)).id;
 		const store = await databaseFacade.createStore(payload);
+		await databaseFacade.updateisSeller(decoded.email, true);
 		return store;
 	}
 }
