@@ -105,6 +105,30 @@ class DatabaseFacade {
 		return updateUser;
 	}
 
+	async haveThisStore(value: string, product_id: string): Promise<boolean> {
+		// this method check if the user have the store of the product
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			const store = await Store.findOne({ where: { userId: user.id } });
+			if (store != null) {
+				const product = await Product.findOne({ where: { id: product_id } });
+				if (product != null) {
+					if (product.storeId === store.id) {
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					throw new Error("Product not found");
+				}
+			} else {
+				throw new Error("Store not found");
+			}
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
 	// Store
 
 	async createStore(payload: StoreInput): Promise<StoreOutput> {

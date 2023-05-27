@@ -21,7 +21,15 @@ class UserController {
 			const user = await userService.updateUser(token as string, payload);
 			res
 				.json({
-					user,
+					// return only some fields of the user
+					user: {
+						firstname: user.firstname,
+						lastname: user.lastname,
+						email: user.email,
+						address: user.address,
+						phone: user.phone,
+						image: user.image,
+					},
 					msg: "User Updated",
 				})
 				.status(STATUS_CODES.CREATED);
@@ -40,7 +48,15 @@ class UserController {
 			const user = await userService.userProfile(token as string);
 			res
 				.json({
-					user,
+					// return only some fields of the user
+					user: {
+						firstname: user.firstname,
+						lastname: user.lastname,
+						email: user.email,
+						address: user.address,
+						phone: user.phone,
+						image: user.image,
+					},
 					msg: "User retrieved successfully",
 				})
 				.status(STATUS_CODES.OK);
