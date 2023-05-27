@@ -4,7 +4,7 @@ import databaseFacade from "@/facades/database.facade";
 import { CartItemInput, CartItemOutput } from "@/models/cartItems";
 
 class CartService {
-	async getCart(token: string): Promise<{ [key: number]: number}> {
+	async getCart(token: string): Promise<{ [key: number]: number }> {
 		token = token.split(" ")[1];
 		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
 		const userId = (await databaseFacade.findEmail(decoded.email)).id;
@@ -38,7 +38,7 @@ class CartService {
 		for (const item of cart) {
 			const product = await databaseFacade.getProduct(item.productId);
 			if (product.availableQuantity < item.quantity) {
-				throw new Error("Not enough stock of \"" + product.name + "\" to buy");
+				throw new Error('Not enough stock of "' + product.name + '" to buy');
 			}
 		}
 		// buy each product

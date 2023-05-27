@@ -105,7 +105,7 @@ class ProductController {
 				organicCertifications: req.body.organicCertifications,
 				categoryId: req.body.categoryId,
 			};
-			const product = await productService.updateProduct(token as string ,payload, req.params.id);
+			const product = await productService.updateProduct(token as string, payload, req.params.id);
 			res
 				.json({
 					product,

@@ -12,8 +12,8 @@ router.post("/find", asyncErrorMiddleware(productController.findProduct));
 // obtain product by id
 router.get("/:id", asyncErrorMiddleware(productController.getProduct));
 // routes only for authenticated sellers
-router.post("/create",authMiddleware, asyncErrorMiddleware(productController.createProduct));
-router.put("/update/:id",authMiddleware, asyncErrorMiddleware(productController.updateProduct));
-router.delete("/delete/:id",authMiddleware, asyncErrorMiddleware(productController.deleteProduct));
+router.post("/create", authMiddleware, asyncErrorMiddleware(productController.createProduct));
+router.put("/update/:id", authMiddleware, asyncErrorMiddleware(productController.updateProduct));
+router.delete("/delete/:id", authMiddleware, asyncErrorMiddleware(productController.deleteProduct));
 
 export default router;

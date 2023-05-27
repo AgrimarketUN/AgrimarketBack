@@ -265,7 +265,7 @@ class DatabaseFacade {
 	// Cart
 
 	async getCart(userId: number): Promise<CartItemOutput[]> {
-		const cart = await CartItem.findAll({ where: {userId: userId } });
+		const cart = await CartItem.findAll({ where: { userId: userId } });
 		return cart;
 	}
 

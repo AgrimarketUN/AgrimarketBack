@@ -20,7 +20,7 @@ class OrderService {
 		payload.userId = (await databaseFacade.findEmail(decoded.email)).id;
 
 		// Is viable buy product by quantity?
-		const product = await databaseFacade.getProduct(payload.productId.toString());
+		const product = await databaseFacade.getProduct(payload.productId);
 		if (product.availableQuantity < payload.quantity) {
 			throw new Error("Not enough products");
 		}
