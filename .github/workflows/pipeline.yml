@@ -24,4 +24,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: psiquedelos/ingesoft_2:latest
+        tags: psiquedelos/is2_back:latest
