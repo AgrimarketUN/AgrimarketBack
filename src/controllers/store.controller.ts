@@ -28,11 +28,9 @@ class StoreController {
 	async createStore(req: Request, res: Response): Promise<void> {
 		try {
 			const token = req.headers.authorization;
-			checkRequiredFields(["name", "description", "address"], req.body);
+			checkRequiredFields(["name"], req.body);
 			const payload = {
 				name: req.body.name,
-				description: req.body.description,
-				address: req.body.address,
 				Image: req.body.Image ? req.body.Image : null,
 				userId: undefined,
 			};

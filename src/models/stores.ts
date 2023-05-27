@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 
 import db from "@/db/connection";
 import User from "@/models/users";
@@ -13,7 +13,7 @@ interface StoreAttributes {
 	state: boolean;
 }
 
-export type StoreInput = Omit<StoreAttributes, "id" | "state" | "Image">;
+export type StoreInput = Optional<StoreAttributes, "id" | "state" | "Image" | "description" | "address">;
 
 export type StoreOutput = Required<StoreAttributes>;
 
