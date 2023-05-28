@@ -1,17 +1,27 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+import { CartGet } from "@/dtos/typeCart.dto";
 import databaseFacade from "@/facades/database.facade";
 import { CartItemInput, CartItemOutput } from "@/models/cartItems";
 
 class CartService {
-	async getCart(token: string): Promise<{ [key: number]: number }> {
+	async getCart(token: string): Promise<CartGet> {
 		token = token.split(" ")[1];
 		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
 		const userId = (await databaseFacade.findEmail(decoded.email)).id;
 		const cart = await databaseFacade.getCart(userId);
-		const dictcart: { [key: number]: number } = {};
+		const dictcart: CartGet = {};
 		for (const item of cart) {
-			dictcart[item.productId] = item.quantity;
+			const product = await databaseFacade.getProduct(item.productId);
+
+			dictcart[item.productId] = {
+				quantity: item.quantity,
+				availableQuantity: product.availableQuantity,
+				name: product.name,
+				price: product.price,
+				image: product.image,
+				expiryDate: product.expiryDate,
+			};
 		}
 		return dictcart;
 	}
