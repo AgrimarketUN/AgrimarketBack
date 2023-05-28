@@ -47,6 +47,28 @@ class CartController {
 		}
 	}
 
+	async updateCart(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
+			const token = req.headers.authorization;
+			checkRequiredFields(["quantity"], req.body);
+			const cart = await cartService.updateCart(id, token as string, req.body.quantity);
+			res
+				.json({
+					cart,
+					msg: "Cart updated",
+				})
+				.status(STATUS_CODES.OK);
+		} catch (error) {
+			res
+				.json({
+					error: (error as Error).message,
+					msg: "Error updating cart",
+				})
+				.status(STATUS_CODES.BAD_REQUEST);
+		}
+	}
+
 	async deleteFromCart(req: Request, res: Response): Promise<void> {
 		try {
 			const { id } = req.params;

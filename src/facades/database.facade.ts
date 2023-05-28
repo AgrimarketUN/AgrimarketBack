@@ -274,6 +274,15 @@ class DatabaseFacade {
 		return cart;
 	}
 
+	async updateCart(payload: CartItemInput): Promise<CartItemOutput> {
+		const cart = await CartItem.findOne({ where: { productId: payload.productId, userId: payload.userId } });
+		if (!cart) {
+			throw new Error("Cart not found");
+		}
+		const updateCart = await cart.update({ quantity: payload.quantity });
+		return updateCart;
+	}
+
 	async deleteFromCart(id: number, userId: number): Promise<CartItemOutput> {
 		const cart = await CartItem.findOne({ where: { productId: id, userId: userId } });
 		if (!cart) {

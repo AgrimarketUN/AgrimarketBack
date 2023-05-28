@@ -53,6 +53,24 @@ class CartService {
 		}
 	}
 
+	async updateCart(id: string, token: string, quantity: number): Promise<CartItemOutput> {
+		token = token.split(" ")[1];
+		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+		const userId = (await databaseFacade.findEmail(decoded.email)).id;
+		const payload: CartItemInput = {
+			productId: +id,
+			userId: userId,
+			quantity: +quantity,
+		};
+		// comprove stock of product
+		const product = await databaseFacade.getProduct(payload.productId);
+		if (product.availableQuantity < payload.quantity) {
+			throw new Error('Not enough stock of "' + product.name + '" to buy');
+		}
+		const cart = await databaseFacade.updateCart(payload);
+		return cart;
+	}
+
 	async deleteFromCart(id: string, token: string): Promise<CartItemOutput> {
 		token = token.split(" ")[1];
 		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
