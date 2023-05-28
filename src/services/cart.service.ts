@@ -19,6 +19,7 @@ class CartService {
 				availableQuantity: product.availableQuantity,
 				name: product.name,
 				price: product.price,
+				unit: product.unit,
 				image: product.image,
 				expiryDate: product.expiryDate,
 			};
