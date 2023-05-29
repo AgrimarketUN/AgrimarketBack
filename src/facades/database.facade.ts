@@ -68,6 +68,16 @@ class DatabaseFacade {
 		}
 	}
 
+	async findPass(password: string, email: string): Promise<boolean> {
+		const user = await User.findOne({ where: { email: email } });
+		if (user != null) {
+			const validation = bcryptjs.compareSync(password, user.dataValues.password);
+			return validation;
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
 	async getUserRole(value: string): Promise<string> {
 		const user = await User.findOne({ where: { email: value } });
 		if (user != null) {

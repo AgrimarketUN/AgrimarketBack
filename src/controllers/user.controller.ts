@@ -34,6 +34,49 @@ class UserController {
 		}
 	}
 
+	async updatePass(req: Request, res: Response): Promise<void> {
+		try {
+			const token = req.headers.authorization;
+
+			const oldPass = req.body.password;
+
+			const ver = await userService.userPass(oldPass, token as string);
+
+			if (ver) {
+				const payload: UserInput = {
+					firstname: req.body.firstname,
+					lastname: req.body.lastname,
+					email: req.body.email,
+					password: req.body.newpassword,
+					address: req.body.address,
+					phone: req.body.phone,
+					image: req.body.image,
+					state: req.body.state,
+				};
+
+				const user = await userService.updateUser(token as string, payload);
+				res
+					.json({
+						user,
+						msg: "User Updated",
+					})
+					.status(STATUS_CODES.CREATED);
+			} else {
+				res
+					.json({
+						msg: "Wrong password",
+					})
+					.status(STATUS_CODES.CREATED);
+			}
+		} catch (error) {
+			res
+				.json({
+					error: (error as Error).message,
+				})
+				.status(STATUS_CODES.INTERNAL_ERROR);
+		}
+	}
+
 	async profileUser(req: Request, res: Response): Promise<void> {
 		try {
 			const token = req.headers.authorization;

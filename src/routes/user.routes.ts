@@ -8,5 +8,6 @@ const router = express.Router();
 
 router.get("/profile", authMiddleware, asyncErrorMiddleware(userController.profileUser));
 router.put("/updateProfile", authMiddleware, asyncErrorMiddleware(userController.updateUser));
+router.put("/updatePassword", authMiddleware, asyncErrorMiddleware(userController.updatePass));
 
 export default router;

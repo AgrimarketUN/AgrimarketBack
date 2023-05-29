@@ -2,13 +2,18 @@ import express from "express";
 
 import productController from "@/controllers/product.controller";
 import asyncErrorMiddleware from "@/middlewares/asyncError.middleware";
+import authMiddleware from "@/middlewares/auth.middleware";
 
 const router = express.Router();
 
 router.get("/get", asyncErrorMiddleware(productController.getProducts));
-router.post("/create", asyncErrorMiddleware(productController.createProduct));
+// filter by name, category, store, etc..
 router.post("/find", asyncErrorMiddleware(productController.findProduct));
-router.put("/update/:id", asyncErrorMiddleware(productController.updateProduct));
-router.delete("/delete/:id", asyncErrorMiddleware(productController.deleteProduct));
+// obtain product by id
+router.get("/:id", asyncErrorMiddleware(productController.getProducts));
+// routes only for authenticated sellers
+router.post("/create", authMiddleware, asyncErrorMiddleware(productController.createProduct));
+router.put("/update/:id", authMiddleware, asyncErrorMiddleware(productController.updateProduct));
+router.delete("/delete/:id", authMiddleware, asyncErrorMiddleware(productController.deleteProduct));
 
 export default router;

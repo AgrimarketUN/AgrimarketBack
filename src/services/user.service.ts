@@ -20,6 +20,16 @@ class UserService {
 		const user = databaseFacade.updateUser(payload, id);
 		return user;
 	}
+
+	async userPass(password: string, token: string): Promise<boolean> {
+		token = token.split(" ")[1];
+		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+		if (await databaseFacade.findPass(password, decoded.email)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 export default new UserService();
