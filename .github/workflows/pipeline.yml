@@ -39,6 +39,7 @@ jobs:
           EMAIL_PASS=${{ secrets.EMAIL_PASS }}
           EMAIL_HOST=${{ secrets.EMAIL_HOST }}
           EMAIL_FROM=${{ secrets.EMAIL_FROM }}
+          RESET_PASS_KEY=${{ secrets.RESET_PASS_KEY }}
 
 
     - name: Configure SSH key
