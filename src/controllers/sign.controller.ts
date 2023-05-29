@@ -8,7 +8,7 @@ import { STATUS_CODES } from "@/utils/constants";
 class RegisterController {
 	async register(req: Request, res: Response): Promise<void> {
 		try {
-			checkRequiredFields(["firstname", "lastname", "email", "password", "phone", "address", "isSeller"], req.body);
+			checkRequiredFields(["firstname", "lastname", "email", "password", "phone", "address"], req.body);
 			const payload = {
 				firstname: req.body.firstname,
 				lastname: req.body.lastname,
@@ -16,7 +16,6 @@ class RegisterController {
 				password: req.body.password,
 				phone: req.body.phone,
 				address: req.body.address,
-				isSeller: req.body.isSeller,
 			};
 			const user = await databaseFacade.createUser(payload);
 			res

@@ -45,7 +45,8 @@ Store.init(
 		},
 		description: {
 			type: DataTypes.TEXT,
-			allowNull: false,
+			allowNull: true,
+			defaultValue: "Tienda de un pequeño productor",
 		},
 		address: {
 			type: DataTypes.STRING(50),

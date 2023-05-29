@@ -15,5 +15,6 @@ router.get("/:id", asyncErrorMiddleware(productController.getProduct));
 router.post("/create", authMiddleware, asyncErrorMiddleware(productController.createProduct));
 router.put("/update/:id", authMiddleware, asyncErrorMiddleware(productController.updateProduct));
 router.delete("/delete/:id", authMiddleware, asyncErrorMiddleware(productController.deleteProduct));
+router.get("/getprodsell", authMiddleware, asyncErrorMiddleware(productController.getProductBySeller));
 
 export default router;

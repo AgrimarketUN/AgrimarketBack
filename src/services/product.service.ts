@@ -33,6 +33,13 @@ class ProductService {
 		const query = await databaseFacade.deleteProduct(product_id);
 		return query;
 	}
+
+	async getProductsSeller(token: string): Promise<ProductOutput[]> {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+		const email = decoded.email;
+		const query = await databaseFacade.getProductsSeller(email);
+		return query;
+	}
 }
 
 export default new ProductService();

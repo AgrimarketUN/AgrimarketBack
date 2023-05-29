@@ -201,6 +201,18 @@ class DatabaseFacade {
 		return updateProduct;
 	}
 
+	async getProductsSeller(value: string): Promise<Product[]> {
+		const user = await User.findOne({ where: { email: value } });
+
+		const store = await Store.findOne({ where: { userId: user?.id } });
+
+		const query = await Product.findAll({ where: { storeId: store?.id } });
+		if (!query) {
+			throw new Error("This seller does not have products");
+		}
+		return query;
+	}
+
 	async findProductBy(type: string, value: string | Array<number>): Promise<ProductOutput[] | undefined> {
 		if (type === "name") {
 			return await Product.findAll({ where: { name: { [Op.like]: "%" + value + "%" }, state: true } });
