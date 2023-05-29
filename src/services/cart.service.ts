@@ -60,6 +60,8 @@ class CartService {
 				quantity: item.quantity,
 			};
 			await databaseFacade.buyProduct(payload);
+			const product = await databaseFacade.getProduct(item.productId);
+			await databaseFacade.updateProductQuantity(product.availableQuantity - payload.quantity, payload.productId.toString());
 			await databaseFacade.deleteFromCart(item.productId, userId);
 		}
 	}
