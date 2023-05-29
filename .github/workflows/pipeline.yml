@@ -61,6 +61,7 @@ jobs:
     - name: Create File
       run: |
         cd AWS-Terraform-Pipeline-Back/logs
+        git branch
         touch $(date +%Y%m%d%H%M%S)
         ls -al
         git init
