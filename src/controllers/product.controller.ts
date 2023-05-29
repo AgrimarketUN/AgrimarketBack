@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import databaseFacade from "@/facades/database.facade";
 import { ProductInput } from "@/models/product";
+import productService from "@/services/product.service";
 import checkRequiredFields from "@/utils/checkfields";
 import { STATUS_CODES } from "@/utils/constants";
 
@@ -24,9 +25,28 @@ class ProductController {
 		}
 	}
 
+	async getProduct(req: Request, res: Response): Promise<void> {
+		try {
+			const query = await databaseFacade.getProduct(+req.params.id);
+			res
+				.json({
+					Product: query,
+					msg: "Product successfully found",
+				})
+				.status(STATUS_CODES.OK);
+		} catch (error) {
+			res
+				.json({
+					msg: "Product not found",
+				})
+				.status(STATUS_CODES.BAD_REQUEST);
+		}
+	}
+
 	async createProduct(req: Request, res: Response): Promise<void> {
 		try {
-			checkRequiredFields(["name", "price", "availableQuantity", "unit", "categoryId", "storeId"], req.body);
+			const token = req.headers.authorization;
+			checkRequiredFields(["name", "price", "availableQuantity", "unit", "categoryId"], req.body);
 			const payload: ProductInput = {
 				name: req.body.name,
 				description: req.body.description,
@@ -41,9 +61,8 @@ class ProductController {
 				cultivationMethod: req.body.cultivationMethod,
 				organicCertifications: req.body.organicCertifications,
 				categoryId: req.body.categoryId,
-				storeId: req.body.storeId,
 			};
-			const product = await databaseFacade.createProduct(payload);
+			const product = await productService.createProduct(token as string, payload);
 			if (product != null) {
 				res
 					.json({
@@ -69,6 +88,8 @@ class ProductController {
 
 	async updateProduct(req: Request, res: Response): Promise<void> {
 		try {
+			const token = req.headers.authorization;
+			checkRequiredFields(["name", "price", "availableQuantity", "unit", "categoryId"], req.body);
 			const payload: ProductInput = {
 				name: req.body.name,
 				description: req.body.description,
@@ -83,9 +104,8 @@ class ProductController {
 				cultivationMethod: req.body.cultivationMethod,
 				organicCertifications: req.body.organicCertifications,
 				categoryId: req.body.categoryId,
-				storeId: req.body.storeId,
 			};
-			const product = await databaseFacade.updateProduct(payload, req.params.id);
+			const product = await productService.updateProduct(token as string, payload, req.params.id);
 			res
 				.json({
 					product,
@@ -127,7 +147,8 @@ class ProductController {
 	async deleteProduct(req: Request, res: Response): Promise<void> {
 		const { id } = req.params;
 		try {
-			const query = await databaseFacade.deleteProduct(id);
+			const token = req.headers.authorization;
+			const query = await productService.deleteProduct(token as string, id);
 			res
 				.json({
 					"Product ": query,

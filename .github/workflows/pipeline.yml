@@ -1,9 +1,10 @@
-name: Docker Build & Publish
+name: Docker Build & Publish to Docker Hub & Push to GitHub Backend
 
 on:
   push:
     branches:
       - dev
+
 
 jobs:
   build_and_publish:
@@ -24,4 +25,54 @@ jobs:
       with:
         context: .
         push: true
-        tags: psiquedelos/ingesoft_2:latest
+        tags: psiquedelos/is2_back:latest
+        build-args: |
+          PORT=${{ secrets.PORT }}
+          DATABASE_NAME=${{ secrets.DATABASE_NAME }}
+          DATABASE_USER=${{ secrets.DATABASE_USER }}
+          DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_HOST=${{ secrets.DATABASE_HOST }}
+          DATABASE_DIALECT=${{ secrets.DATABASE_DIALECT }}
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+          DOMAIN=${{ secrets.DOMAIN }}
+          EMAIL_USER=${{ secrets.EMAIL_USER }}
+          EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+          EMAIL_HOST=${{ secrets.EMAIL_HOST }}
+          EMAIL_FROM=${{ secrets.EMAIL_FROM }}
+          RESET_PASS_KEY=${{ secrets.RESET_PASS_KEY }}
+
+
+    - name: Configure SSH key
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Clone GitHub repository
+      run: git clone git@github.com:AgrimarketUN/AWS-Terraform-Pipeline-Back.git
+
+    - name: Configurar identidad de usuario en Git
+      run: |
+        cd AWS-Terraform-Pipeline-Back
+        git config user.email "dmirandam@unal.edu.co"
+        git config user.name "dmirandam"
+
+    - name: Create File
+      run: |
+        cd AWS-Terraform-Pipeline-Back/logs
+        touch $(date +%Y%m%d%H%M%S)
+        ls -al
+        git init
+        git status
+
+    - name: Commit to GitHub repository
+      run: | 
+        cd AWS-Terraform-Pipeline-Back
+        git add .
+        git commit -m "New back Docker image"
+
+    - name: Push changes to GitHub repository
+      run: |
+        cd AWS-Terraform-Pipeline-Back
+        git push

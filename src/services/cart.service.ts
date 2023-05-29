@@ -1,15 +1,30 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+import { CartGet } from "@/dtos/typeCart.dto";
 import databaseFacade from "@/facades/database.facade";
 import { CartItemInput, CartItemOutput } from "@/models/cartItems";
 
 class CartService {
-	async getCart(id: string, token: string): Promise<CartItemOutput[]> {
+	async getCart(token: string): Promise<CartGet> {
 		token = token.split(" ")[1];
 		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
 		const userId = (await databaseFacade.findEmail(decoded.email)).id;
-		const cart = await databaseFacade.getCart(+id, userId);
-		return cart;
+		const cart = await databaseFacade.getCart(userId);
+		const dictcart: CartGet = {};
+		for (const item of cart) {
+			const product = await databaseFacade.getProduct(item.productId);
+
+			dictcart[item.productId] = {
+				quantity: item.quantity,
+				availableQuantity: product.availableQuantity,
+				name: product.name,
+				price: product.price,
+				unit: product.unit,
+				image: product.image,
+				expiryDate: product.expiryDate,
+			};
+		}
+		return dictcart;
 	}
 
 	async addToCart(id: string, token: string, quantity: number): Promise<CartItemOutput> {
@@ -22,6 +37,50 @@ class CartService {
 			quantity: +quantity,
 		};
 		const cart = await databaseFacade.addToCart(payload);
+		return cart;
+	}
+
+	async buyCart(token: string): Promise<void> {
+		token = token.split(" ")[1];
+		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+		const userId = (await databaseFacade.findEmail(decoded.email)).id;
+		const cart = await databaseFacade.getCart(userId);
+		// comprove stock of each product
+		for (const item of cart) {
+			const product = await databaseFacade.getProduct(item.productId);
+			if (product.availableQuantity < item.quantity) {
+				throw new Error('Not enough stock of "' + product.name + '" to buy');
+			}
+		}
+		// buy each product
+		for (const item of cart) {
+			const payload = {
+				productId: item.productId,
+				userId: userId,
+				quantity: item.quantity,
+			};
+			await databaseFacade.buyProduct(payload);
+			const product = await databaseFacade.getProduct(item.productId);
+			await databaseFacade.updateProductQuantity(product.availableQuantity - payload.quantity, payload.productId.toString());
+			await databaseFacade.deleteFromCart(item.productId, userId);
+		}
+	}
+
+	async updateCart(id: string, token: string, quantity: number): Promise<CartItemOutput> {
+		token = token.split(" ")[1];
+		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+		const userId = (await databaseFacade.findEmail(decoded.email)).id;
+		const payload: CartItemInput = {
+			productId: +id,
+			userId: userId,
+			quantity: +quantity,
+		};
+		// comprove stock of product
+		const product = await databaseFacade.getProduct(payload.productId);
+		if (product.availableQuantity < payload.quantity) {
+			throw new Error('Not enough stock of "' + product.name + '" to buy');
+		}
+		const cart = await databaseFacade.updateCart(payload);
 		return cart;
 	}
 
