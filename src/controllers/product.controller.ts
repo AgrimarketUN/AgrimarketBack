@@ -46,19 +46,18 @@ class ProductController {
 	async getProductBySeller(req: Request, res: Response): Promise<void> {
 		try {
 			const token = req.headers.authorization;
-
 			const products = await productService.getProductsSeller(token as string);
-
 			res
 				.json({
 					Products: products,
-					msg: "Product successfully found",
+					msg: "Products successfully found",
 				})
 				.status(STATUS_CODES.OK);
 		} catch (error) {
 			res
 				.json({
-					msg: "Product not found",
+					error: (error as Error).message,
+					msg: "Products not found",
 				})
 				.status(STATUS_CODES.BAD_REQUEST);
 		}
@@ -67,7 +66,7 @@ class ProductController {
 	async createProduct(req: Request, res: Response): Promise<void> {
 		try {
 			const token = req.headers.authorization;
-			checkRequiredFields(["name", "price", "availableQuantity", "unit", "categoryId"], req.body);
+			checkRequiredFields(["name", "price", "availableQuantity", "categoryId"], req.body);
 			const payload: ProductInput = {
 				name: req.body.name,
 				description: req.body.description,

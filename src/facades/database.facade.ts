@@ -159,6 +159,20 @@ class DatabaseFacade {
 		return store;
 	}
 
+	async getMyStore(value: string): Promise<StoreOutput> {
+		const user = await User.findOne({ where: { email: value } });
+		if (user != null) {
+			const store = await Store.findOne({ where: { userId: user.id } });
+			if (store != null) {
+				return store;
+			} else {
+				throw new Error("Store not found");
+			}
+		} else {
+			throw new Error("User not found");
+		}
+	}
+
 	// Product
 
 	async getProducts(): Promise<Product[]> {
@@ -201,14 +215,11 @@ class DatabaseFacade {
 		return updateProduct;
 	}
 
-	async getProductsSeller(value: string): Promise<Product[]> {
-		const user = await User.findOne({ where: { email: value } });
-
-		const store = await Store.findOne({ where: { userId: user?.id } });
-
-		const query = await Product.findAll({ where: { storeId: store?.id } });
-		if (!query) {
-			throw new Error("This seller does not have products");
+	async getProductsSeller(value: string): Promise<ProductOutput[]> {
+		const store = await this.getMyStore(value);
+		const query = await Product.findAll({ where: { storeId: store.id } });
+		if (query.length === 0) {
+			throw new Error("Products not found");
 		}
 		return query;
 	}
