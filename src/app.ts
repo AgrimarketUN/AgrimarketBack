@@ -20,6 +20,8 @@ import signRoutes from "@/routes/sign.routes";
 import storeRoutes from "@/routes/store.routes";
 import userRoutes from "@/routes/user.routes";
 
+import defaultRoutes from "./routes/default.routes";
+
 export class App {
 	private readonly _app: Application;
 
@@ -42,6 +44,7 @@ export class App {
 		this._app.use("/user", userRoutes);
 		this._app.use("/review", reviewRoutes);
 		this._app.use("/cart", cartRoutes);
+		this._app.use("/", defaultRoutes);
 		this._app.use(errorMiddleware);
 	}
 
