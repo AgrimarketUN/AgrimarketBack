@@ -5,7 +5,8 @@ import { ProductInput, ProductOutput } from "@/models/product";
 
 class ProductService {
 	async createProduct(token: string, payload: ProductInput): Promise<ProductOutput> {
-		const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+		token = token.split(" ")[1];
+		const decoded = <JwtPayload>jwt.verify(token, process.env.JWT_SECRET as string);
 		if ((await databaseFacade.getisSeller(decoded.email)) === false) {
 			throw new Error("You are not a seller");
 		}
@@ -15,6 +16,7 @@ class ProductService {
 	}
 
 	async updateProduct(token: string, payload: ProductInput, product_id: string): Promise<ProductOutput> {
+		token = token.split(" ")[1];
 		const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 		const decode_id = (await databaseFacade.findEmail(decoded.email)).id;
 		if ((await databaseFacade.haveThisStore(decoded.email, product_id)) === false) {
@@ -26,6 +28,7 @@ class ProductService {
 	}
 
 	async deleteProduct(token: string, product_id: string): Promise<ProductOutput> {
+		token = token.split(" ")[1];
 		const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 		if ((await databaseFacade.haveThisStore(decoded.email, product_id)) === false) {
 			throw new Error("You are not the owner of this product");
@@ -35,6 +38,7 @@ class ProductService {
 	}
 
 	async getProductsSeller(token: string): Promise<ProductOutput[]> {
+		token = token.split(" ")[1];
 		const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 		const email = decoded.email;
 		const query = await databaseFacade.getProductsSeller(email);
