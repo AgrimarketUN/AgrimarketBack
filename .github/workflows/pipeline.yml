@@ -26,6 +26,20 @@ jobs:
         context: .
         push: true
         tags: psiquedelos/is2_back:latest
+        build-args: |
+          PORT: ${{ secrets.PORT }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_DIALECT: ${{ secrets.DATABASE_DIALECT }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          DOMAIN: ${{ secrets.DOMAIN }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+
 
     - name: Configure SSH key
       run: |
